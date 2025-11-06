@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:edochub_b2b/modular_button.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -84,7 +83,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               // Bottom Buttons
               Column(
                 children: [
-                  ModularButton(
                     onPressed: () {
                       // Navigate to the Login/Register screen
                       Navigator.pushReplacementNamed(context, '/login');
@@ -92,15 +90,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     child: const Text('Create Account'),
                   ),
                   const SizedBox(height: 16),
-                  ModularButton(
                     onPressed: () {
                       // Navigate to the Login/Register screen
                       Navigator.pushReplacementNamed(context, '/login');
                     },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.onSurface,
-                      side: BorderSide(color: Theme.of(context).cardColor),
-                    ),
                     child: const Text('Log In'),
                   ),
                   const SizedBox(height: 16),
@@ -112,7 +105,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     child: Text(
                       'Skip for now',
                       style: textTheme.bodyMedium
-                          ?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                     ),
                   ),
                 ],
@@ -145,8 +137,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       width: _currentPage == index ? 24 : 8,
       decoration: BoxDecoration(
         color: _currentPage == index
-            ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
       ),
     );
@@ -173,13 +163,10 @@ class _OnboardingPage extends StatelessWidget {
         Container(
           width: 140,
           height: 140,
-          decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Theme.of(context).cardColor,
           ),
           child: Icon(
             icon,
-            color: Theme.of(context).colorScheme.primary,
             size: 60,
           ),
         ),
@@ -195,7 +182,6 @@ class _OnboardingPage extends StatelessWidget {
         Text(
           description,
           style: textTheme.bodyLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
             height: 1.5,
           ),
           textAlign: TextAlign.center,
