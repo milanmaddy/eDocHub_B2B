@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
 import 'package:edochub_b2b/utils/theme_manager.dart';
+import 'package:edochub_b2b/widgets/modular_snackbar.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final VoidCallback onBack;
+  const ProfileScreen({super.key, required this.onBack});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -20,16 +22,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // Usually Navigator.pop(context), but depends on navigation setup
-          },
+          onPressed: widget.onBack,
         ),
         title: const Text('My Profile',
             style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              showModularSnackbar(
+                context,
+                'Changes saved successfully!',
+                type: SnackbarType.success,
+              );
+            },
             child: Text('Save',
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
@@ -50,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: 'Personal Information',
               initiallyExpanded: true,
               children: [
-                ProfileTextField(label: 'Full Name', initialValue: 'Dr. Jane Doe'),
+                ProfileTextField(label: 'Full Name', initialValue: 'Dr. Soumik Maity'),
                 SizedBox(height: 16),
                 ProfileTextField(
                     label: 'Medical License Number',
@@ -71,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // Add specialization fields here
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text('Specialization content goes here.',
+                  child: Text('Cardiology',
                       style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
                 )
               ],
@@ -101,7 +107,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 40),
             ModularButton(
-              onPressed: () {},
+              onPressed: () {
+                 showModularSnackbar(
+                  context,
+                  'Changes saved successfully!',
+                  type: SnackbarType.success,
+                );
+              },
               child: const Text('Save Changes'),
             ),
             const SizedBox(height: 20),
@@ -137,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         const SizedBox(height: 16),
         Text(
-          'Dr. Jane Doe, MD',
+          'Dr. Soumik Maity',
           style: Theme.of(context)
               .textTheme
               .headlineSmall
@@ -145,7 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         const SizedBox(height: 4),
         Text(
-          'General Practitioner',
+          'Cardiologist',
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), fontSize: 16),
         ),
       ],
