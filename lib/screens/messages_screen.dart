@@ -8,28 +8,28 @@ class MessagesScreen extends StatelessWidget {
     // Mock data for conversation list
     final conversations = [
       {
-        'name': 'Dr. Rohan Patel',
+        'name': 'Dr. Evelyn Reed',
         'message': 'Yes, I received the patient files. Thank you.',
         'time': '10:42 AM',
         'avatar': 'https://placehold.co/100x100/png',
         'unread': 2,
       },
       {
-        'name': 'Priya Singh',
+        'name': 'John Smith',
         'message': 'Okay, see you at my appointment tomorrow.',
         'time': 'Yesterday',
         'avatar': 'https://placehold.co/100x100/png',
         'unread': 0,
       },
       {
-        'name': 'Kolkata Clinic',
+        'name': 'Central Clinic',
         'message': 'Reminder: Staff meeting at 3:00 PM today.',
         'time': 'Yesterday',
         'avatar': 'https://placehold.co/100x100/png',
         'unread': 1,
       },
-      {
-        'name': 'Advik Gupta',
+       {
+        'name': 'Maria Garcia',
         'message': 'Thank you for the consultation!',
         'time': 'Oct 26',
         'avatar': 'https://placehold.co/100x100/png',
@@ -39,17 +39,24 @@ class MessagesScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title:
-            const Text('Messages', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Messages', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add_comment_outlined),
+            onPressed: () {
+              // Action for new message
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
           // Search Bar
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: const EdgeInsets.all(16.0),
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search messages...',
@@ -69,14 +76,8 @@ class MessagesScreen extends StatelessWidget {
           ),
           // Conversation List
           Expanded(
-            child: ListView.separated(
+            child: ListView.builder(
               itemCount: conversations.length,
-              separatorBuilder: (context, index) => Divider(
-                indent: 80,
-                endIndent: 16,
-                height: 1,
-                color: Theme.of(context).cardColor,
-              ),
               itemBuilder: (context, index) {
                 final conversation = conversations[index];
                 return ConversationTile(
@@ -90,13 +91,6 @@ class MessagesScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Action for new message
-        },
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: const Icon(Icons.add_comment_outlined, color: Colors.white),
       ),
     );
   }
@@ -120,32 +114,19 @@ class ConversationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isUnread = unreadCount > 0;
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       leading: CircleAvatar(
         radius: 28,
         backgroundImage: NetworkImage(avatarUrl),
       ),
-      title: Flexible(
-        child: Text(
-          name,
-          style: TextStyle(
-            fontWeight: isUnread ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
+      title: Text(
+        name,
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
-      subtitle: Flexible(
-        child: Text(
-          message,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: isUnread
-                ? Theme.of(context).colorScheme.onSurface
-                : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-          ),
-        ),
+      subtitle: Text(
+        message,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
       trailing: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -153,14 +134,10 @@ class ConversationTile extends StatelessWidget {
         children: [
           Text(
             time,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: isUnread
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                ),
+            style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 4),
-          if (isUnread)
+          if (unreadCount > 0)
             CircleAvatar(
               radius: 10,
               backgroundColor: Theme.of(context).colorScheme.primary,

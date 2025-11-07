@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
 import 'package:edochub_b2b/utils/theme_manager.dart';
-import 'package:edochub_b2b/widgets/modular_snackbar.dart';
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback onBack;
@@ -29,13 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: () {
-              showModularSnackbar(
-                context,
-                'Changes saved successfully!',
-                type: SnackbarType.success,
-              );
-            },
+            onPressed: () {},
             child: Text('Save',
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
@@ -56,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: 'Personal Information',
               initiallyExpanded: true,
               children: [
-                ProfileTextField(label: 'Full Name', initialValue: 'Dr. Soumik Maity'),
+                ProfileTextField(label: 'Full Name', initialValue: 'Dr. Jane Doe'),
                 SizedBox(height: 16),
                 ProfileTextField(
                     label: 'Medical License Number',
@@ -77,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // Add specialization fields here
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text('Cardiology',
+                  child: Text('Specialization content goes here.',
                       style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
                 )
               ],
@@ -107,13 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 40),
             ModularButton(
-              onPressed: () {
-                 showModularSnackbar(
-                  context,
-                  'Changes saved successfully!',
-                  type: SnackbarType.success,
-                );
-              },
+              onPressed: () {},
               child: const Text('Save Changes'),
             ),
             const SizedBox(height: 20),
@@ -149,7 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         const SizedBox(height: 16),
         Text(
-          'Dr. Soumik Maity',
+          'Dr. Jane Doe, MD',
           style: Theme.of(context)
               .textTheme
               .headlineSmall
@@ -157,7 +144,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         const SizedBox(height: 4),
         Text(
-          'Cardiologist',
+          'General Practitioner',
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), fontSize: 16),
         ),
       ],

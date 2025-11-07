@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:edochub_b2b/screens/appointments_screen.dart';
 import 'package:edochub_b2b/screens/profile_screen.dart';
+import 'package:edochub_b2b/screens/notifications_screen.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
 import 'package:edochub_b2b/screens/messages_screen.dart';
 import 'package:edochub_b2b/widgets/modular_bottom_nav_bar.dart';
+import 'package:edochub_b2b/widgets/dashboard_header.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class MainAppScreen extends StatefulWidget {
   const MainAppScreen({super.key});
@@ -16,6 +19,66 @@ class MainAppScreen extends StatefulWidget {
 
 class _MainAppScreenState extends State<MainAppScreen> {
   int _selectedIndex = 0;
+  String _location = 'Loading...';
+
+  @override
+  void initState() {
+    super.initState();
+    _determinePosition();
+  }
+
+  Future<void> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      if (!mounted) return;
+      setState(() {
+        _location = 'Location services are disabled.';
+      });
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        if (!mounted) return;
+        setState(() {
+          _location = 'Location permissions are denied';
+        });
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      if (!mounted) return;
+      setState(() {
+        _location =
+        'Location permissions are permanently denied, we cannot request permissions.';
+      });
+      return;
+    }
+
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high)
+          .timeout(const Duration(seconds: 10));
+      List<Placemark> placemarks =
+      await placemarkFromCoordinates(position.latitude, position.longitude);
+      Placemark place = placemarks[0];
+      if (!mounted) return;
+      setState(() {
+        _location = "${place.locality}, ${place.country}";
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _location = 'Could not get location';
+      });
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -23,13 +86,17 @@ class _MainAppScreenState extends State<MainAppScreen> {
     });
   }
 
+  void _onNotificationsPressed() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> widgetOptions = <Widget>[
-      DashboardScreen(
-        onNavigate: _onItemTapped,
-        onProfileTap: () => _onItemTapped(4), // Navigate to Profile tab
-      ),
+      const DashboardScreen(),
       const AppointmentsScreen(),
       Scaffold(
           body: Center(
@@ -37,10 +104,16 @@ class _MainAppScreenState extends State<MainAppScreen> {
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurface)))),
       const MessagesScreen(),
-      ProfileScreen(onBack: () => _onItemTapped(0)), // Pass the callback
+      ProfileScreen(onBack: () => _onItemTapped(0)),
     ];
 
     return Scaffold(
+      appBar: DashboardHeader(
+        userName: 'Dr. Soumik Maity',
+        userLocation: _location,
+        onNotificationsPressed: _onNotificationsPressed,
+        onProfileTap: () => _onItemTapped(4),
+      ),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),
@@ -75,11 +148,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
 }
 
 class DashboardScreen extends StatefulWidget {
-  final Function(int) onNavigate;
-  final VoidCallback onProfileTap;
-
-  const DashboardScreen(
-      {super.key, required this.onNavigate, required this.onProfileTap});
+  const DashboardScreen({super.key});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -88,59 +157,6 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  String _location = 'Loading...';
-
-  @override
-  void initState() {
-    super.initState();
-    _determinePosition();
-  }
-
-  Future<void> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      setState(() {
-        _location = 'Location services are disabled.';
-      });
-      return;
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        setState(() {
-          _location = 'Location permissions are denied';
-        });
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      setState(() {
-        _location =
-            'Location permissions are permanently denied, we cannot request permissions.';
-      });
-      return;
-    }
-
-    try {
-      Position position = await Geolocator.getCurrentPosition();
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
-      Placemark place = placemarks[0];
-      setState(() {
-        _location = "${place.locality}, ${place.country}";
-      });
-    } catch (e) {
-      setState(() {
-        _location = 'Could not get location';
-      });
-    }
-  }
 
   // Mock data for carousel banners
   final List<Map<String, String>> _banners = [
@@ -163,90 +179,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20.0),
+      child: AnimationLimiter(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(context),
-            const SizedBox(height: 24),
-            _buildStatsCards(context),
-            const SizedBox(height: 24),
-            _buildCarousel(context),
-            const SizedBox(height: 24),
-            _buildUpNext(context),
-            const SizedBox(height: 24),
-            _buildTodaysAgenda(context),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            GestureDetector(
-              onTap: widget.onProfileTap,
-              child: const CircleAvatar(
-                radius: 24,
-                backgroundImage:
-                    NetworkImage('https://placehold.co/100x100/png'),
+          children: AnimationConfiguration.toStaggeredList(
+            duration: const Duration(milliseconds: 375),
+            childAnimationBuilder: (widget) => SlideAnimation(
+              verticalOffset: 50.0,
+              child: FadeInAnimation(
+                child: widget,
               ),
             ),
-            const SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Good Morning, Dr. Soumik Maity',
-                  style: textTheme.headlineSmall
-                      ?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Monday, October 28',
-                  style: textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.6)),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.location_on_outlined,
-                        size: 16,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.6)),
-                    const SizedBox(width: 4),
-                    Text(
-                      _location,
-                      style: textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(0.6)),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
+            children: [
+              _buildStatsCards(context),
+              const SizedBox(height: 24),
+              _buildCarousel(context),
+              const SizedBox(height: 24),
+              _buildUpNext(context),
+              const SizedBox(height: 24),
+              _buildTodaysAgenda(context),
+            ],
+          ),
         ),
-        IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.notifications_outlined,
-              color: Theme.of(context).colorScheme.onSurface),
-        ),
-      ],
+      ),
     );
   }
 
@@ -268,13 +225,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: GestureDetector(
-            onTap: () => widget.onNavigate(3), // Navigate to the Messages tab
-            child: StatCard(
-                title: 'Messages',
-                value: '3', // Example number of messages
-                color: Theme.of(context).colorScheme.primary),
-          ),
+          child: StatCard(
+              title: 'Messages',
+              value: '3',
+              color: Theme.of(context).colorScheme.primary),
         ),
       ],
     );
@@ -314,7 +268,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            Colors.black.withOpacity(0.7),
+                            Theme.of(context).colorScheme.surface.withOpacity(0.7),
                           ],
                         ),
                       ),
@@ -327,8 +281,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         children: [
                           Text(
                             banner['title']!,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -336,8 +290,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           const SizedBox(height: 4),
                           Text(
                             banner['subtitle']!,
-                            style: const TextStyle(
-                              color: Colors.white70,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                               fontSize: 14,
                             ),
                           ),
@@ -355,7 +309,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
             _banners.length,
-            (index) => _buildDot(index: index),
+                (index) => _buildDot(index: index),
           ),
         ),
       ],
@@ -384,7 +338,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       children: [
         Text('Up Next',
             style:
-                textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+            textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         Container(
           padding: const EdgeInsets.all(16),
@@ -405,19 +359,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
                         Icon(Icons.timer_outlined,
-                            color: Colors.orange, size: 16),
-                        SizedBox(width: 4),
+                            color: Theme.of(context).colorScheme.secondary, size: 16),
+                        const SizedBox(width: 4),
                         Text('In 5 min',
                             style: TextStyle(
-                                color: Colors.orange,
+                                color: Theme.of(context).colorScheme.secondary,
                                 fontWeight: FontWeight.bold)),
                       ],
                     ),
@@ -436,10 +390,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Expanded(
                     child: ModularButton(
                       onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.primary,
-                      ),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -454,12 +404,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Expanded(
                     child: ModularButton(
                       onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onSurface,
-                        side:
-                            BorderSide(color: Theme.of(context).cardColor),
-                      ),
                       child: const Text('View Details'),
                     ),
                   ),
@@ -479,7 +423,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       children: [
         Text('Today\'s Agenda',
             style:
-                textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+            textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         _buildAgendaItem(context, 'Rohan Patel', '11:00 AM - In-person',
             Icons.person_outline),
@@ -499,7 +443,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor:
-              Theme.of(context).colorScheme.primary.withOpacity(0.2),
+          Theme.of(context).colorScheme.primary.withOpacity(0.2),
           child: Icon(icon, color: Theme.of(context).colorScheme.primary),
         ),
         title: Text(name),
@@ -523,9 +467,9 @@ class StatCard extends StatelessWidget {
 
   const StatCard(
       {super.key,
-      required this.title,
-      required this.value,
-      required this.color});
+        required this.title,
+        required this.value,
+        required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -542,7 +486,7 @@ class StatCard extends StatelessWidget {
           Text(title,
               style: textTheme.bodyMedium?.copyWith(
                   color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+                  Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
           const SizedBox(height: 8),
           Text(
             value,
