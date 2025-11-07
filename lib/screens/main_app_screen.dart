@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:edochub_b2b/screens/appointments_screen.dart';
-import 'package:edochub_b2b/screens/profile_screen.dart';
-import 'package:edochub_b2b/screens/notifications_screen.dart';
-import 'package:edochub_b2b/widgets/modular_button.dart';
 import 'package:edochub_b2b/screens/messages_screen.dart';
-import 'package:edochub_b2b/widgets/modular_bottom_nav_bar.dart';
+import 'package:edochub_b2b/screens/notifications_screen.dart';
+import 'package:edochub_b2b/screens/profile_screen.dart';
 import 'package:edochub_b2b/widgets/dashboard_header.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
+import 'package:edochub_b2b/widgets/modular_button.dart';
+import 'package:edochub_b2b/widgets/stylish_bottom_nav_bar.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MainAppScreen extends StatefulWidget {
   const MainAppScreen({super.key});
@@ -19,12 +19,12 @@ class MainAppScreen extends StatefulWidget {
 
 class _MainAppScreenState extends State<MainAppScreen> {
   int _selectedIndex = 0;
-  String _location = 'Loading...';
+  String _location = 'Loading location...'; // Initial display text
 
   @override
   void initState() {
     super.initState();
-    _determinePosition();
+    _determinePosition(); // Fetch location when the screen loads
   }
 
   Future<void> _determinePosition() async {
@@ -35,7 +35,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
     if (!serviceEnabled) {
       if (!mounted) return;
       setState(() {
-        _location = 'Location services are disabled.';
+        _location = 'Location is disabled.';
       });
       return;
     }
@@ -46,7 +46,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
       if (permission == LocationPermission.denied) {
         if (!mounted) return;
         setState(() {
-          _location = 'Location permissions are denied';
+          _location = 'Location permission denied.';
         });
         return;
       }
@@ -55,28 +55,30 @@ class _MainAppScreenState extends State<MainAppScreen> {
     if (permission == LocationPermission.deniedForever) {
       if (!mounted) return;
       setState(() {
-        _location =
-        'Location permissions are permanently denied, we cannot request permissions.';
+        _location = 'Location permissions are denied forever.';
       });
       return;
     }
 
     try {
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high)
-          .timeout(const Duration(seconds: 10));
+        desiredAccuracy: LocationAccuracy.medium,
+      ).timeout(const Duration(seconds: 10));
+
       List<Placemark> placemarks =
-      await placemarkFromCoordinates(position.latitude, position.longitude);
+          await placemarkFromCoordinates(position.latitude, position.longitude);
       Placemark place = placemarks[0];
-      if (!mounted) return;
-      setState(() {
-        _location = "${place.locality}, ${place.country}";
-      });
+      if (mounted) {
+        setState(() {
+          _location = "${place.locality}, ${place.administrativeArea}";
+        });
+      }
     } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _location = 'Could not get location';
-      });
+      if (mounted) {
+        setState(() {
+          _location = 'Could not get location.';
+        });
+      }
     }
   }
 
@@ -95,7 +97,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> widgetOptions = <Widget>[
+    final List<Widget> screens = [
       const DashboardScreen(),
       const AppointmentsScreen(),
       Scaffold(
@@ -108,38 +110,54 @@ class _MainAppScreenState extends State<MainAppScreen> {
     ];
 
     return Scaffold(
-      appBar: DashboardHeader(
-        userName: 'Dr. Soumik Maity',
-        userLocation: _location,
-        onNotificationsPressed: _onNotificationsPressed,
-        onProfileTap: () => _onItemTapped(4),
+      extendBody: true,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            DashboardHeader(
+              userName: 'Dr. Soumik Maity',
+              userLocation: _location, // Pass the location state
+              onNotificationsPressed: _onNotificationsPressed,
+              onProfileTap: () => _onItemTapped(4),
+            ),
+            Expanded(
+              child: IndexedStack(
+                index: _selectedIndex,
+                children: screens,
+              ),
+            ),
+          ],
+        ),
       ),
-      body: Center(
-        child: widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: ModularBottomNavBar(
+      bottomNavigationBar: StylishBottomNavBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
+            icon: Icon(Icons.dashboard_outlined),
+            activeIcon: Icon(Icons.dashboard),
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today_outlined),
+            activeIcon: Icon(Icons.calendar_today),
             label: 'Appointments',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.people_alt_outlined),
+            activeIcon: Icon(Icons.people_alt),
             label: 'Patients',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.message_outlined),
+            activeIcon: Icon(Icons.message),
             label: 'Messages',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            label: 'Settings',
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
       ),
@@ -147,6 +165,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
   }
 }
 
+// ... (Rest of the file remains the same)
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -180,7 +199,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: AnimationLimiter(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,6 +212,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
             children: [
+              const SizedBox(height: 16),
               _buildStatsCards(context),
               const SizedBox(height: 24),
               _buildCarousel(context),
@@ -200,6 +220,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               _buildUpNext(context),
               const SizedBox(height: 24),
               _buildTodaysAgenda(context),
+              const SizedBox(height: 90), // Extra space to see content behind navbar
             ],
           ),
         ),
@@ -208,23 +229,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildStatsCards(BuildContext context) {
-    return Row(
+    return Wrap(
+      spacing: 16.0, // Horizontal space between cards
+      runSpacing: 16.0, // Vertical space between cards
       children: [
-        Expanded(
+        SizedBox(
+          width: MediaQuery.of(context).size.width / 2 - 28, // Responsive width
           child: StatCard(
               title: 'Total Appointments',
               value: '12',
               color: Theme.of(context).colorScheme.primary),
         ),
-        const SizedBox(width: 16),
-        Expanded(
+        SizedBox(
+          width: MediaQuery.of(context).size.width / 2 - 28, // Responsive width
           child: StatCard(
               title: 'Video Calls',
               value: '5',
               color: Theme.of(context).colorScheme.primary),
         ),
-        const SizedBox(width: 16),
-        Expanded(
+        SizedBox(
+          width: MediaQuery.of(context).size.width / 2 - 28, // Responsive width
           child: StatCard(
               title: 'Messages',
               value: '3',
@@ -251,9 +275,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               final banner = _banners[index];
               return Card(
                 clipBehavior: Clip.antiAlias,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
@@ -268,7 +289,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            Theme.of(context).colorScheme.surface.withOpacity(0.7),
+                            Theme.of(context).colorScheme.surface.withOpacity(0.8),
                           ],
                         ),
                       ),
@@ -291,7 +312,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Text(
                             banner['subtitle']!,
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.9),
                               fontSize: 14,
                             ),
                           ),
@@ -345,6 +366,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 15,
+                offset: const Offset(0,5),
+              )
+            ]
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -403,6 +431,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: ModularButton(
+                      buttonType: ButtonType.outlined,
                       onPressed: () {},
                       child: const Text('View Details'),
                     ),
@@ -429,8 +458,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Icons.person_outline),
         _buildAgendaItem(context, 'Priya Singh', '1:30 PM - Video Call',
             Icons.videocam_outlined),
-        _buildAgendaItem(context, 'Advik Gupta', '2:15 PM - In-person',
-            Icons.person_outline),
       ],
     );
   }
@@ -438,12 +465,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildAgendaItem(
       BuildContext context, String name, String time, IconData icon) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor:
-          Theme.of(context).colorScheme.primary.withOpacity(0.2),
+          Theme.of(context).colorScheme.primary.withOpacity(0.1),
           child: Icon(icon, color: Theme.of(context).colorScheme.primary),
         ),
         title: Text(name),
@@ -474,26 +499,24 @@ class StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style: textTheme.bodyMedium?.copyWith(
-                  color:
-                  Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: textTheme.headlineMedium
-                ?.copyWith(color: color, fontWeight: FontWeight.bold),
-          ),
-        ],
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title,
+                style: textTheme.bodyMedium?.copyWith(
+                    color:
+                    Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: textTheme.headlineMedium
+                  ?.copyWith(color: color, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -16,7 +16,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   final List<Map<String, String>> _pages = [
     {
       "icon": "calendar_today",
-      "title": "Welcome to eDoc Hub",
+      "title": "Welcome to eDoc Hub B2B",
       "description": "The all-in-one solution for managing your practice, starting with seamless appointment scheduling."
     },
     {
@@ -45,7 +45,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'eDoc Hub',
+                  'eDoc Hub B2B',
                   style: textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),

@@ -3,7 +3,7 @@ import 'package:edochub_b2b/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:edochub_b2b/screens/main_app_screen.dart';
-import 'package:edochub_b2b/screens/splash_screen.dart';
+import 'package:edochub_b2b/screens/animated_splash_screen.dart';
 import 'package:edochub_b2b/utils/theme_manager.dart';
 
 // Define a professional green color palette
@@ -43,11 +43,23 @@ class EdocHubApp extends StatelessWidget {
           darkTheme: _buildDarkTheme(context),
           themeMode: currentMode,
           initialRoute: '/splash',
-          routes: {
-            '/splash': (context) => const SplashScreen(),
-            '/welcome': (context) => const WelcomeScreen(),
-            '/login': (context) => const LoginScreen(),
-            '/main': (context) => const MainAppScreen(),
+          onGenerateRoute: (settings) {
+            switch (settings.name) {
+              case '/splash':
+                return MaterialPageRoute(builder: (_) => const AnimatedSplashScreen());
+              case '/welcome':
+                return MaterialPageRoute(builder: (_) => const WelcomeScreen());
+              case '/login':
+                return MaterialPageRoute(builder: (_) => const LoginScreen());
+              case '/main':
+                // The MainAppScreen now correctly receives arguments
+                return MaterialPageRoute(
+                  builder: (_) => const MainAppScreen(),
+                  settings: settings, // Pass the settings to access arguments
+                );
+              default:
+                return MaterialPageRoute(builder: (_) => const AnimatedSplashScreen());
+            }
           },
         );
       },
