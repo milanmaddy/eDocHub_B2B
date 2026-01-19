@@ -16,7 +16,6 @@ void showModularSnackbar(BuildContext context, String message, {SnackbarType typ
       iconData = Icons.error;
       break;
     case SnackbarType.info:
-    default:
       backgroundColor = Theme.of(context).colorScheme.secondary;
       iconData = Icons.info;
       break;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:edochub_b2b/screens/main_app_screen.dart';
 import 'package:edochub_b2b/screens/animated_splash_screen.dart';
+import 'package:edochub_b2b/utils/color_extensions.dart';
 import 'package:edochub_b2b/utils/theme_manager.dart';
 
 // Define a professional green color palette
@@ -18,10 +19,23 @@ class AppColors {
   static const Color textGreyDark = Color(0xFF888888);
 
   // Light Theme Colors
-  static const Color lightBackground = Color(0xFFFFF8E1); // A warm, creamy off-white
+  static const Color lightBackground =
+      Color(0xFFFFF8E1); // A warm, creamy off-white
   static const Color lightCard = Color(0xFFFFFFFF);
   static const Color textBlack = Color(0xFF212121);
   static const Color textGreyLight = Color(0xFF616161);
+}
+
+class AppSpacing {
+  static const double xs = 8;
+  static const double sm = 12;
+  static const double md = 16;
+  static const double lg = 24;
+  static const double xl = 32;
+}
+
+class AppRadii {
+  static const BorderRadius md = BorderRadius.all(Radius.circular(12));
 }
 
 void main() {
@@ -46,7 +60,8 @@ class EdocHubApp extends StatelessWidget {
           onGenerateRoute: (settings) {
             switch (settings.name) {
               case '/splash':
-                return MaterialPageRoute(builder: (_) => const AnimatedSplashScreen());
+                return MaterialPageRoute(
+                    builder: (_) => const AnimatedSplashScreen());
               case '/welcome':
                 return MaterialPageRoute(builder: (_) => const WelcomeScreen());
               case '/login':
@@ -58,7 +73,8 @@ class EdocHubApp extends StatelessWidget {
                   settings: settings, // Pass the settings to access arguments
                 );
               default:
-                return MaterialPageRoute(builder: (_) => const AnimatedSplashScreen());
+                return MaterialPageRoute(
+                    builder: (_) => const AnimatedSplashScreen());
             }
           },
         );
@@ -97,11 +113,36 @@ class EdocHubApp extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryGreen,
           foregroundColor: AppColors.textWhite,
+          minimumSize: const Size.fromHeight(52),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadii.md),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size.fromHeight(52),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadii.md),
+          side: BorderSide(color: colorScheme.primary.withOpacitySafe(0.35)),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.accentGold,
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.darkCard,
+        contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.md),
+        border: const OutlineInputBorder(borderRadius: AppRadii.md),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: AppRadii.md,
+          borderSide:
+              BorderSide(color: colorScheme.onSurface.withOpacitySafe(0.18)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: AppRadii.md,
+          borderSide: BorderSide(color: colorScheme.primary, width: 1.3),
         ),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
@@ -152,11 +193,36 @@ class EdocHubApp extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryGreen,
           foregroundColor: Colors.white,
+          minimumSize: const Size.fromHeight(52),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadii.md),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size.fromHeight(52),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadii.md),
+          side: BorderSide(color: colorScheme.primary.withOpacitySafe(0.35)),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primaryGreen,
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.lightCard,
+        contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.md),
+        border: const OutlineInputBorder(borderRadius: AppRadii.md),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: AppRadii.md,
+          borderSide:
+              BorderSide(color: colorScheme.onSurface.withOpacitySafe(0.14)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: AppRadii.md,
+          borderSide: BorderSide(color: colorScheme.primary, width: 1.3),
         ),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(

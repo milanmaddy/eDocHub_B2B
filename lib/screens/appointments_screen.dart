@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
+import 'package:edochub_b2b/utils/color_extensions.dart';
 
 class AppointmentsScreen extends StatefulWidget {
   const AppointmentsScreen({super.key});
@@ -54,7 +55,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>
               decoration: InputDecoration(
                 hintText: 'Search by patient or date',
                 prefixIcon:
-                    Icon(Icons.search, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                    Icon(Icons.search, color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6)),
                 filled: true,
                 fillColor: Theme.of(context).cardColor,
                 border: OutlineInputBorder(
@@ -69,7 +70,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>
               controller: _tabController,
               indicatorColor: Theme.of(context).colorScheme.primary,
               labelColor: Theme.of(context).colorScheme.onSurface,
-              unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6),
               tabs: [
                 _buildTab('Pending', '3'),
                 _buildTab('Confirmed'),
@@ -84,10 +85,10 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>
                   _buildAppointmentsList(), // Pending appointments
                   Center(
                       child: Text('Confirmed Appointments',
-                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6)))),
                   Center(
                       child: Text('Completed Appointments',
-                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6)))),
                 ],
               ),
             ),
@@ -199,7 +200,7 @@ class AppointmentCard extends StatelessWidget {
                         style: Theme.of(context)
                             .textTheme
                             .bodyMedium
-                            ?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+                            ?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
                   ],
                 ),
               ],

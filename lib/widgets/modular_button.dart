@@ -32,7 +32,6 @@ class ModularButton extends StatelessWidget {
           child: child,
         );
       case ButtonType.elevated:
-      default:
         return ElevatedButton(
           onPressed: onPressed,
           style: style,

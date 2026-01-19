@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:edochub_b2b/utils/color_extensions.dart';
 
 class MessagesScreen extends StatelessWidget {
   const MessagesScreen({super.key});
@@ -64,7 +65,7 @@ class MessagesScreen extends StatelessWidget {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.6)),
+                        .withOpacitySafe(0.6)),
                 filled: true,
                 fillColor: Theme.of(context).cardColor,
                 border: OutlineInputBorder(

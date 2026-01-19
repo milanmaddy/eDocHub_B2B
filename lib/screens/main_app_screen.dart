@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:edochub_b2b/utils/color_extensions.dart';
 
 class MainAppScreen extends StatefulWidget {
   const MainAppScreen({super.key});
@@ -289,7 +290,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            Theme.of(context).colorScheme.surface.withOpacity(0.8),
+                            Theme.of(context).colorScheme.surface.withOpacitySafe(0.8),
                           ],
                         ),
                       ),
@@ -312,7 +313,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Text(
                             banner['subtitle']!,
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.9),
+                              color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.9),
                               fontSize: 14,
                             ),
                           ),
@@ -346,7 +347,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       decoration: BoxDecoration(
         color: _currentPage == index
             ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+            : Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.3),
         borderRadius: BorderRadius.circular(12),
       ),
     );
@@ -368,7 +369,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withOpacitySafe(0.05),
                 blurRadius: 15,
                 offset: const Offset(0,5),
               )
@@ -389,7 +390,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.secondary.withOpacitySafe(0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -411,7 +412,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(height: 4),
               Text('10:00 AM - 10:30 AM',
                   style: textTheme.bodyMedium
-                      ?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+                      ?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -468,7 +469,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor:
-          Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          Theme.of(context).colorScheme.primary.withOpacitySafe(0.1),
           child: Icon(icon, color: Theme.of(context).colorScheme.primary),
         ),
         title: Text(name),
@@ -476,9 +477,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             style: Theme.of(context)
                 .textTheme
                 .bodySmall
-                ?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+                ?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
         trailing: Icon(Icons.chevron_right,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+            color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6)),
         onTap: () {},
       ),
     );
@@ -508,7 +509,7 @@ class StatCard extends StatelessWidget {
             Text(title,
                 style: textTheme.bodyMedium?.copyWith(
                     color:
-                    Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+                    Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
             const SizedBox(height: 8),
             Text(
               value,

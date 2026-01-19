@@ -1,5 +1,6 @@
 import 'package:edochub_b2b/widgets/modular_button.dart';
 import 'package:flutter/material.dart';
+import 'package:edochub_b2b/utils/color_extensions.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -37,80 +38,77 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: [
-              // Top Title
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'eDoc Hub B2B',
-                  style: textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'eDoc Hub B2B',
+                        style: textTheme.headlineMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: 420,
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: _pages.length,
+                        onPageChanged: (index) {
+                          setState(() => _currentPage = index);
+                        },
+                        itemBuilder: (context, index) {
+                          return _OnboardingPage(
+                            icon: _getIconData(_pages[index]["icon"]!),
+                            title: _pages[index]["title"]!,
+                            description: _pages[index]["description"]!,
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        _pages.length,
+                        (index) => _buildDot(index: index),
+                      ),
+                    ),
+                    const Spacer(),
+                    ModularButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                      child: const Text('Create Account'),
+                    ),
+                    const SizedBox(height: 16),
+                    ModularButton(
+                      buttonType: ButtonType.outlined,
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                      child: const Text('Log In'),
+                    ),
+                    const SizedBox(height: 8),
+                    ModularButton(
+                      buttonType: ButtonType.text,
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/main');
+                      },
+                      child: const Text('Skip for now'),
+                    ),
+                  ],
                 ),
               ),
-              const Spacer(),
-              // PageView for Onboarding Content
-              Expanded(
-                flex: 3,
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: _pages.length,
-                  onPageChanged: (index) {
-                    setState(() {
-                      _currentPage = index;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    return _OnboardingPage(
-                      icon: _getIconData(_pages[index]["icon"]!),
-                      title: _pages[index]["title"]!,
-                      description: _pages[index]["description"]!,
-                    );
-                  },
-                ),
-              ),
-              // Page Indicator
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  _pages.length,
-                      (index) => _buildDot(index: index),
-                ),
-              ),
-              const Spacer(),
-              // Bottom Buttons
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ModularButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                    child: const Text('Create Account'),
-                  ),
-                  const SizedBox(height: 16),
-                  ModularButton(
-                    buttonType: ButtonType.outlined,
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                    child: const Text('Log In'),
-                  ),
-                  const SizedBox(height: 16),
-                  ModularButton(
-                    buttonType: ButtonType.text,
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/main');
-                    },
-                    child: const Text('Skip for now'),
-                  ),
-                ],
-              )
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -138,7 +136,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       decoration: BoxDecoration(
         color: _currentPage == index
             ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+            : Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.3),
         borderRadius: BorderRadius.circular(12),
       ),
     );
@@ -167,7 +165,7 @@ class _OnboardingPage extends StatelessWidget {
           width: 140,
           height: 140,
           decoration: BoxDecoration(
-            color: colorScheme.primary.withOpacity(0.1),
+            color: colorScheme.primary.withOpacitySafe(0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -189,7 +187,7 @@ class _OnboardingPage extends StatelessWidget {
           description,
           style: textTheme.bodyLarge?.copyWith(
             height: 1.5,
-            color: colorScheme.onSurface.withOpacity(0.7),
+            color: colorScheme.onSurface.withOpacitySafe(0.7),
           ),
           textAlign: TextAlign.center,
         ),

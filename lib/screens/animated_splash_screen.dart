@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:edochub_b2b/utils/color_extensions.dart';
 
 class AnimatedSplashScreen extends StatefulWidget {
   const AnimatedSplashScreen({super.key});
@@ -33,7 +34,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     // Navigate after a fixed time, no longer waits for location.
     Timer(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/main');
+        Navigator.of(context).pushReplacementNamed('/welcome');
       }
     });
   }
@@ -51,7 +52,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: isDarkMode ? const Color(0xFF121212) : colorScheme.background,
+      backgroundColor: isDarkMode ? const Color(0xFF121212) : colorScheme.surface,
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: Stack(
@@ -70,7 +71,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                     const SizedBox(width: 16),
                     Container(
                       width: 1.5,
-                      color: colorScheme.primary.withOpacity(0.8),
+                      color: colorScheme.primary.withOpacitySafe(0.8),
                     ),
                     const SizedBox(width: 16),
                     Column(
@@ -85,7 +86,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                             children: [
                               TextSpan(
                                 text: 'eDoc Hub ',
-                                style: TextStyle(color: colorScheme.onBackground),
+                                style: TextStyle(color: colorScheme.onSurface),
                               ),
                               TextSpan(
                                 text: 'B2B',
@@ -98,7 +99,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                         Text(
                           'Your Wellness, in Your Hands.',
                           style: textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onBackground.withOpacity(0.7),
+                            color: colorScheme.onSurface.withOpacitySafe(0.7),
                           ),
                         ),
                       ],
@@ -113,7 +114,8 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                 padding: const EdgeInsets.only(bottom: 32.0),
                 child: Text(
                   'v1.0.0',
-                  style: textTheme.bodySmall?.copyWith(color: colorScheme.onBackground.withOpacity(0.4)),
+                  style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurface.withOpacitySafe(0.4)),
                 ),
               ),
             ),
