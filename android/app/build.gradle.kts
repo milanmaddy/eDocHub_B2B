@@ -35,6 +35,8 @@ android {
             keyPassword = keyProperties.getProperty("keyPassword")
             storeFile = keyProperties.getProperty("storeFile")?.let { file(it) }
             storePassword = keyProperties.getProperty("storePassword")
+            v1SigningEnabled = true
+            v2SigningEnabled = true
         }
     }
 
@@ -58,14 +60,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-    }
-    
-    // Add v1 and v2 signing configurations
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-            output.processResourcesProvider.get().setMetadata("v1SigningEnabled", true)
-            output.processResourcesProvider.get().setMetadata("v2SigningEnabled", true)
         }
     }
 }
