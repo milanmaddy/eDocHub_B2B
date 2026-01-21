@@ -51,7 +51,8 @@ android {
             if (keyPropertiesFile.exists()) {
                 signingConfig = signingConfigs.getByName("release")
             }
-            
+            signingConfig?.enableV1Signing = true
+            signingConfig?.enableV2Signing = true
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
