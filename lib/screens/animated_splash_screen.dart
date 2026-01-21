@@ -48,11 +48,9 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: isDarkMode ? const Color(0xFF121212) : colorScheme.surface,
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: Stack(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:edochub_b2b/utils/color_extensions.dart';
 
 class PebbleIconButton extends StatelessWidget {
   final IconData icon;
@@ -18,21 +17,19 @@ class PebbleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final bgColor = backgroundColor ?? colorScheme.surface;
-    final fgColor = iconColor ?? colorScheme.onSurface;
 
     return Container(
       decoration: BoxDecoration(
-        color: bgColor,
+        color: backgroundColor ?? colorScheme.surface,
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacitySafe(0.08),
+            color: colorScheme.shadow.withOpacity(0.08),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.white.withOpacitySafe(0.5),
+            color: colorScheme.onSurface.withOpacity(0.1),
             blurRadius: 1,
             spreadRadius: 1,
             offset: const Offset(0, -1),
@@ -46,7 +43,7 @@ class PebbleIconButton extends StatelessWidget {
           onTap: onPressed,
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Icon(icon, color: fgColor),
+            child: Icon(icon, color: iconColor ?? colorScheme.onSurface),
           ),
         ),
       ),

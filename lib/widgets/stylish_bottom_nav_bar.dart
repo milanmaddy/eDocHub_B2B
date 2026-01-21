@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:edochub_b2b/utils/color_extensions.dart';
 
 class StylishBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -26,7 +25,7 @@ class StylishBottomNavBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacitySafe(0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 20,
             spreadRadius: 5,
           ),
@@ -46,7 +45,7 @@ class StylishBottomNavBar extends StatelessWidget {
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
-                    color: colorScheme.primary.withOpacitySafe(0.2),
+                    color: colorScheme.secondary,
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
@@ -70,7 +69,7 @@ class StylishBottomNavBar extends StatelessWidget {
                           curve: Curves.easeOut,
                           child: Icon(
                             isSelected ? (item.activeIcon as Icon).icon : (item.icon as Icon).icon,
-                            color: isSelected ? colorScheme.primary : colorScheme.onSurface.withOpacitySafe(0.6),
+                            color: isSelected ? colorScheme.onSecondary : colorScheme.onSurface.withOpacity(0.6),
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -80,7 +79,7 @@ class StylishBottomNavBar extends StatelessWidget {
                           child: Text(
                             item.label ?? '',
                             style: textTheme.bodySmall?.copyWith(
-                              color: colorScheme.primary,
+                              color: colorScheme.onSecondary,
                               fontWeight: FontWeight.bold,
                             ),
                             maxLines: 1,

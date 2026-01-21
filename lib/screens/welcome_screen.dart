@@ -18,17 +18,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     {
       "icon": "calendar_today",
       "title": "Welcome to eDoc Hub B2B",
-      "description": "The all-in-one solution for managing your practice, starting with seamless appointment scheduling."
+      "description":
+          "The all-in-one solution for managing your practice, starting with seamless appointment scheduling."
     },
     {
       "icon": "video_call",
       "title": "Connect with Patients",
-      "description": "Engage in secure video consultations and manage your patient records all in one place."
+      "description":
+          "Engage in secure video consultations and manage your patient records all in one place."
     },
     {
       "icon": "work_history",
       "title": "Streamline Your Workflow",
-      "description": "Manage your agenda, consultation history, and profile with ease. Built for professionals like you."
+      "description":
+          "Manage your agenda, consultation history, and profile with ease. Built for professionals like you."
     }
   ];
 
@@ -43,66 +46,75 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             return SingleChildScrollView(
               padding: const EdgeInsets.all(24.0),
               child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                constraints: BoxConstraints(minHeight: constraints.maxHeight - 48),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'eDoc Hub B2B',
-                        style: textTheme.headlineMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
+                    Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'eDoc Hub B2B',
+                            style: textTheme.headlineMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          height: 420,
+                          child: PageView.builder(
+                            controller: _pageController,
+                            itemCount: _pages.length,
+                            onPageChanged: (index) {
+                              setState(() => _currentPage = index);
+                            },
+                            itemBuilder: (context, index) {
+                              return _OnboardingPage(
+                                icon: _getIconData(_pages[index]["icon"]!),
+                                title: _pages[index]["title"]!,
+                                description: _pages[index]["description"]!,
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            _pages.length,
+                            (index) => _buildDot(index: index),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      height: 420,
-                      child: PageView.builder(
-                        controller: _pageController,
-                        itemCount: _pages.length,
-                        onPageChanged: (index) {
-                          setState(() => _currentPage = index);
-                        },
-                        itemBuilder: (context, index) {
-                          return _OnboardingPage(
-                            icon: _getIconData(_pages[index]["icon"]!),
-                            title: _pages[index]["title"]!,
-                            description: _pages[index]["description"]!,
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        _pages.length,
-                        (index) => _buildDot(index: index),
-                      ),
-                    ),
-                    const Spacer(),
-                    ModularButton(
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/login');
-                      },
-                      child: const Text('Create Account'),
-                    ),
-                    const SizedBox(height: 16),
-                    ModularButton(
-                      buttonType: ButtonType.outlined,
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/login');
-                      },
-                      child: const Text('Log In'),
-                    ),
-                    const SizedBox(height: 8),
-                    ModularButton(
-                      buttonType: ButtonType.text,
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/main');
-                      },
-                      child: const Text('Skip for now'),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ModularButton(
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/login');
+                          },
+                          child: const Text('Create Account'),
+                        ),
+                        const SizedBox(height: 16),
+                        ModularButton(
+                          buttonType: ButtonType.outlined,
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/login');
+                          },
+                          child: const Text('Log In'),
+                        ),
+                        const SizedBox(height: 8),
+                        ModularButton(
+                          buttonType: ButtonType.text,
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/main');
+                          },
+                          child: const Text('Skip for now'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -165,13 +177,13 @@ class _OnboardingPage extends StatelessWidget {
           width: 140,
           height: 140,
           decoration: BoxDecoration(
-            color: colorScheme.primary.withOpacitySafe(0.1),
+            color: colorScheme.primary,
             shape: BoxShape.circle,
           ),
           child: Icon(
             icon,
             size: 60,
-            color: colorScheme.primary,
+            color: colorScheme.onPrimary,
           ),
         ),
         const SizedBox(height: 48),

@@ -9,42 +9,12 @@ class AppointmentsScreen extends StatefulWidget {
   State<AppointmentsScreen> createState() => _AppointmentsScreenState();
 }
 
-class _AppointmentsScreenState extends State<AppointmentsScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class _AppointmentsScreenState extends State<AppointmentsScreen> {
+  int _selectedSegment = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {},
-        ),
-        title: const Text('Appointments',
-            style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add, size: 28),
-            onPressed: () {},
-          ),
-        ],
-      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
@@ -65,32 +35,10 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>
               ),
             ),
             const SizedBox(height: 16),
-            // Tab Bar
-            TabBar(
-              controller: _tabController,
-              indicatorColor: Theme.of(context).colorScheme.primary,
-              labelColor: Theme.of(context).colorScheme.onSurface,
-              unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6),
-              tabs: [
-                _buildTab('Pending', '3'),
-                _buildTab('Confirmed'),
-                _buildTab('Completed'),
-              ],
-            ),
-            // Tab Bar View
+            _buildSegmentedControl(),
+            const SizedBox(height: 20),
             Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildAppointmentsList(), // Pending appointments
-                  Center(
-                      child: Text('Confirmed Appointments',
-                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6)))),
-                  Center(
-                      child: Text('Completed Appointments',
-                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6)))),
-                ],
-              ),
+              child: _buildAppointmentsList(),
             ),
           ],
         ),
@@ -98,25 +46,71 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>
     );
   }
 
-  Tab _buildTab(String title, [String? count]) {
-    return Tab(
+  Widget _buildSegmentedControl() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(title),
-          if (count != null) ...[
-            const SizedBox(width: 8),
-            CircleAvatar(
-              radius: 10,
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-              child: Text(count,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSecondary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold)),
-            ),
-          ]
+          _buildSegment(0, 'Pending', '3'),
+          _buildSegment(1, 'Confirmed'),
+          _buildSegment(2, 'Completed'),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSegment(int index, String title, [String? count]) {
+    final isSelected = _selectedSegment == index;
+    return Expanded(
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _selectedSegment = index;
+          });
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected ? Theme.of(context).colorScheme.primary : null,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6),
+                ),
+              ),
+              if (count != null) ...[
+                const SizedBox(width: 8),
+                CircleAvatar(
+                  radius: 10,
+                  backgroundColor: isSelected
+                      ? Theme.of(context).colorScheme.onPrimary.withOpacitySafe(0.2)
+                      : Theme.of(context).colorScheme.secondary,
+                  child: Text(count,
+                      style: TextStyle(
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(context).colorScheme.onSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold)),
+                ),
+              ]
+            ],
+          ),
+        ),
       ),
     );
   }

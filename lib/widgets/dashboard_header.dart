@@ -1,6 +1,5 @@
 import 'package:edochub_b2b/widgets/pebble_icon_button.dart';
 import 'package:flutter/material.dart';
-import 'package:edochub_b2b/utils/color_extensions.dart';
 
 class DashboardHeader extends StatelessWidget {
   final VoidCallback onNotificationsPressed;
@@ -56,14 +55,14 @@ class DashboardHeader extends StatelessWidget {
                           Icon(
                             Icons.location_on_outlined,
                             size: 14,
-                            color: colorScheme.onSurface.withOpacitySafe(0.6),
+                            color: colorScheme.onSurfaceVariant,
                           ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               userLocation,
                               style: textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurface.withOpacitySafe(0.6),
+                                color: colorScheme.onSurfaceVariant,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),

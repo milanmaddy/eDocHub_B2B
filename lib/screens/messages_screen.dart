@@ -39,20 +39,6 @@ class MessagesScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Messages', style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_comment_outlined),
-            onPressed: () {
-              // Action for new message
-            },
-          ),
-        ],
-      ),
       body: Column(
         children: [
           // Search Bar

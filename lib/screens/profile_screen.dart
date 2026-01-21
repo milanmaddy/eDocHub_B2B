@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
 import 'package:edochub_b2b/utils/theme_manager.dart';
-import 'package:edochub_b2b/utils/color_extensions.dart';
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback onBack;
@@ -17,27 +16,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: widget.onBack,
-        ),
-        title: const Text('My Profile',
-            style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: Text('Save',
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16)),
-          ),
-        ],
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         child: Column(
@@ -72,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text('Specialization content goes here.',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
                 )
               ],
             ),
@@ -84,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text('Availability & Contact content goes here.',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
                 )
               ],
             ),
@@ -146,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 4),
         Text(
           'General Practitioner',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6), fontSize: 16),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), fontSize: 16),
         ),
       ],
     );
@@ -198,7 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: Center(
                     child:
-                        Text('Away', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6)))),
+                        Text('Away', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))),
               ),
             ),
           ),
@@ -260,7 +238,7 @@ class ProfileTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
+        Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
         const SizedBox(height: 8),
         TextFormField(
           initialValue: initialValue,
@@ -272,7 +250,7 @@ class ProfileTextField extends StatelessWidget {
                 OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.2)),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
             ),
           ),
         ),
