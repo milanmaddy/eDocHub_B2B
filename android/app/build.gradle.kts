@@ -35,8 +35,6 @@ android {
             keyPassword = keyProperties.getProperty("keyPassword")
             storeFile = keyProperties.getProperty("storeFile")?.let { file(it) }
             storePassword = keyProperties.getProperty("storePassword")
-            v1SigningEnabled = true
-            v2SigningEnabled = true
         }
     }
 
