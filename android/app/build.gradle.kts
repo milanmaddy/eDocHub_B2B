@@ -39,10 +39,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.edochub_b2b"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -51,13 +48,10 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // If key.properties doesn't exist, signing with debug keys.
             if (keyPropertiesFile.exists()) {
                 signingConfig = signingConfigs.getByName("release")
             }
             
-            // Enable code shrinking, obfuscation, and optimization
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -66,10 +60,17 @@ android {
             )
         }
     }
+    
+    // Add v1 and v2 signing configurations
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            output.processResourcesProvider.get().setMetadata("v1SigningEnabled", true)
+            output.processResourcesProvider.get().setMetadata("v2SigningEnabled", true)
+        }
+    }
 }
 
 dependencies {
-    // Needed when R8/minify is enabled: Flutter references Play Core classes for deferred components
     implementation("com.google.android.play:core:1.10.3")
 }
 
