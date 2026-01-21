@@ -52,8 +52,10 @@ android {
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("release")
+            // If key.properties doesn't exist, signing with debug keys.
+            if (keyPropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             
             // Enable code shrinking, obfuscation, and optimization
             isMinifyEnabled = true
