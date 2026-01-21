@@ -1,244 +1,25 @@
-import 'package:edochub_b2b/screens/login_screen.dart';
-import 'package:edochub_b2b/screens/welcome_screen.dart';
+import 'package:edochub_b2b/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:edochub_b2b/screens/main_app_screen.dart';
-import 'package:edochub_b2b/screens/animated_splash_screen.dart';
-import 'package:edochub_b2b/utils/color_extensions.dart';
-import 'package:edochub_b2b/utils/theme_manager.dart';
-
-// Define a professional green color palette
-class AppColors {
-  static const Color primaryGreen = Color(0xFF4C6A4E); // A warm, earthy green
-  static const Color accentGold = Color(0xFFDDAA55); // A warm, honey gold
-
-  // Dark Theme Colors
-  static const Color darkBackground = Color(0xFF1B1A17); // A deep, warm brown
-  static const Color darkCard = Color(0xFF2A2924);
-  static const Color textWhite = Color(0xFFE0E0E0);
-  static const Color textGreyDark = Color(0xFF888888);
-
-  // Light Theme Colors
-  static const Color lightBackground =
-      Color(0xFFFFF8E1); // A warm, creamy off-white
-  static const Color lightCard = Color(0xFFFFFFFF);
-  static const Color textBlack = Color(0xFF212121);
-  static const Color textGreyLight = Color(0xFF616161);
-}
-
-class AppSpacing {
-  static const double xs = 8;
-  static const double sm = 12;
-  static const double md = 16;
-  static const double lg = 24;
-  static const double xl = 32;
-}
-
-class AppRadii {
-  static const BorderRadius md = BorderRadius.all(Radius.circular(12));
-}
 
 void main() {
-  runApp(const EdocHubApp());
+  runApp(const MyApp());
 }
 
-class EdocHubApp extends StatelessWidget {
-  const EdocHubApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
-      builder: (context, currentMode, child) {
-        return MaterialApp(
-          title: 'eDoc Hub B2B',
-          debugShowCheckedModeBanner: false,
-          theme: _buildLightTheme(context),
-          darkTheme: _buildDarkTheme(context),
-          themeMode: currentMode,
-          initialRoute: '/splash',
-          onGenerateRoute: (settings) {
-            switch (settings.name) {
-              case '/splash':
-                return MaterialPageRoute(
-                    builder: (_) => const AnimatedSplashScreen());
-              case '/welcome':
-                return MaterialPageRoute(builder: (_) => const WelcomeScreen());
-              case '/login':
-                return MaterialPageRoute(builder: (_) => const LoginScreen());
-              case '/main':
-                // The MainAppScreen now correctly receives arguments
-                return MaterialPageRoute(
-                  builder: (_) => const MainAppScreen(),
-                  settings: settings, // Pass the settings to access arguments
-                );
-              default:
-                return MaterialPageRoute(
-                    builder: (_) => const AnimatedSplashScreen());
-            }
-          },
-        );
-      },
-    );
-  }
-
-  ThemeData _buildDarkTheme(BuildContext context) {
-    final baseTheme = ThemeData.dark();
-    final textTheme = GoogleFonts.interTextTheme(baseTheme.textTheme).apply(
-      bodyColor: AppColors.textWhite,
-      displayColor: AppColors.textWhite,
-    );
-    const colorScheme = ColorScheme.dark(
-      primary: AppColors.primaryGreen,
-      secondary: AppColors.accentGold,
-      surface: AppColors.darkBackground,
-      onSurface: AppColors.textWhite,
-      onPrimary: AppColors.textWhite,
-      onSecondary: AppColors.textBlack,
-      error: Colors.redAccent,
-    );
-
-    return baseTheme.copyWith(
-      primaryColor: AppColors.primaryGreen,
-      scaffoldBackgroundColor: AppColors.darkBackground,
-      cardColor: AppColors.darkCard,
-      textTheme: textTheme,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.darkBackground,
-        foregroundColor: AppColors.textWhite,
-        elevation: 0,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'EdocHub',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF4C6A4E)),
+        textTheme: GoogleFonts.poppinsTextTheme(),
+        useMaterial3: true,
       ),
-      colorScheme: colorScheme,
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryGreen,
-          foregroundColor: AppColors.textWhite,
-          minimumSize: const Size.fromHeight(52),
-          shape: const RoundedRectangleBorder(borderRadius: AppRadii.md),
-        ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(52),
-          shape: const RoundedRectangleBorder(borderRadius: AppRadii.md),
-          side: BorderSide(color: colorScheme.primary.withOpacitySafe(0.35)),
-        ),
-      ),
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: AppColors.accentGold,
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: AppColors.darkCard,
-        contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md, vertical: AppSpacing.md),
-        border: const OutlineInputBorder(borderRadius: AppRadii.md),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: AppRadii.md,
-          borderSide:
-              BorderSide(color: colorScheme.onSurface.withOpacitySafe(0.18)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: AppRadii.md,
-          borderSide: BorderSide(color: colorScheme.primary, width: 1.3),
-        ),
-      ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: AppColors.accentGold,
-        foregroundColor: AppColors.textBlack,
-      ),
-      cardTheme: CardThemeData(
-        color: AppColors.darkCard,
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      iconTheme: const IconThemeData(
-        color: AppColors.textWhite,
-      ),
-    );
-  }
-
-  ThemeData _buildLightTheme(BuildContext context) {
-    final baseTheme = ThemeData.light();
-    final textTheme = GoogleFonts.interTextTheme(baseTheme.textTheme).apply(
-      bodyColor: AppColors.textBlack,
-      displayColor: AppColors.textBlack,
-    );
-    const colorScheme = ColorScheme.light(
-      primary: AppColors.primaryGreen,
-      secondary: AppColors.accentGold,
-      surface: AppColors.lightBackground,
-      onSurface: AppColors.textBlack,
-      onPrimary: Colors.white,
-      onSecondary: AppColors.textBlack,
-      error: Colors.redAccent,
-    );
-
-    return baseTheme.copyWith(
-      primaryColor: AppColors.primaryGreen,
-      scaffoldBackgroundColor: AppColors.lightBackground,
-      cardColor: AppColors.lightCard,
-      textTheme: textTheme,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.lightBackground,
-        foregroundColor: AppColors.textBlack,
-        elevation: 0,
-      ),
-      colorScheme: colorScheme,
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryGreen,
-          foregroundColor: Colors.white,
-          minimumSize: const Size.fromHeight(52),
-          shape: const RoundedRectangleBorder(borderRadius: AppRadii.md),
-        ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(52),
-          shape: const RoundedRectangleBorder(borderRadius: AppRadii.md),
-          side: BorderSide(color: colorScheme.primary.withOpacitySafe(0.35)),
-        ),
-      ),
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: AppColors.primaryGreen,
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: AppColors.lightCard,
-        contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md, vertical: AppSpacing.md),
-        border: const OutlineInputBorder(borderRadius: AppRadii.md),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: AppRadii.md,
-          borderSide:
-              BorderSide(color: colorScheme.onSurface.withOpacitySafe(0.14)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: AppRadii.md,
-          borderSide: BorderSide(color: colorScheme.primary, width: 1.3),
-        ),
-      ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: AppColors.accentGold,
-        foregroundColor: AppColors.textBlack,
-      ),
-      cardTheme: CardThemeData(
-        color: AppColors.lightCard,
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      iconTheme: const IconThemeData(
-        color: AppColors.textBlack,
-      ),
+      home: const RegistrationScreen(),
     );
   }
 }

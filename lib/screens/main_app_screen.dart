@@ -60,8 +60,11 @@ class _MainAppScreenState extends State<MainAppScreen> {
     }
 
     try {
+      const locationSettings = LocationSettings(
+        accuracy: LocationAccuracy.medium,
+      );
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.medium,
+        locationSettings: locationSettings,
       ).timeout(const Duration(seconds: 10));
 
       List<Placemark> placemarks =

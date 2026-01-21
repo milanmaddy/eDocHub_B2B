@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:edochub_b2b/utils/color_utils.dart';
 
 enum SnackbarType { success, error, info }
 
@@ -21,15 +22,17 @@ void showModularSnackbar(BuildContext context, String message, {SnackbarType typ
       break;
   }
 
+  final Color textColor = getContrastingTextColor(backgroundColor);
+
   final snackBar = SnackBar(
     content: Row(
       children: [
-        Icon(iconData, color: Colors.white),
+        Icon(iconData, color: textColor),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             message,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
           ),
         ),
       ],

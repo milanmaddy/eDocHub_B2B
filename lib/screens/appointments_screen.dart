@@ -1,6 +1,9 @@
+import 'dart:async';
+import 'package:edochub_b2b/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
 import 'package:edochub_b2b/utils/color_extensions.dart';
+import 'package:edochub_b2b/widgets/modular_snackbar.dart';
 
 class AppointmentsScreen extends StatefulWidget {
   const AppointmentsScreen({super.key});
@@ -11,6 +14,32 @@ class AppointmentsScreen extends StatefulWidget {
 
 class _AppointmentsScreenState extends State<AppointmentsScreen> {
   int _selectedSegment = 0;
+  bool _isLoading = true;
+  List<dynamic> _appointments = [];
+  final ApiService _apiService = ApiService();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAppointments();
+  }
+
+  Future<void> _fetchAppointments() async {
+    try {
+      final data = await _apiService.get('appointments');
+      if (!mounted) return;
+      setState(() {
+        _appointments = data;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      showModularSnackbar(context, 'Failed to load appointments', type: SnackbarType.error);
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +49,10 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
         child: Column(
           children: [
             const SizedBox(height: 16),
-            // Search Bar
             TextField(
               decoration: InputDecoration(
                 hintText: 'Search by patient or date',
-                prefixIcon:
-                    Icon(Icons.search, color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6)),
+                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6)),
                 filled: true,
                 fillColor: Theme.of(context).cardColor,
                 border: OutlineInputBorder(
@@ -38,7 +65,9 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
             _buildSegmentedControl(),
             const SizedBox(height: 20),
             Expanded(
-              child: _buildAppointmentsList(),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _buildAppointmentsList(),
             ),
           ],
         ),
@@ -116,33 +145,11 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
   }
 
   Widget _buildAppointmentsList() {
-    // Mock Data
-    final appointments = [
-      {
-        'name': 'John Doe',
-        'time': 'Tomorrow, 10:30 AM',
-        'type': 'Video Consultation',
-        'avatar': 'https://placehold.co/100x100/png'
-      },
-      {
-        'name': 'Maria Garcia',
-        'time': 'Tomorrow, 2:00 PM',
-        'type': 'In-Person Visit',
-        'avatar': 'https://placehold.co/100x100/png'
-      },
-      {
-        'name': 'Kenji Tanaka',
-        'time': 'Nov 28, 9:00 AM',
-        'type': 'Video Consultation',
-        'avatar': 'https://placehold.co/100x100/png'
-      },
-    ];
-
     return ListView.builder(
       padding: const EdgeInsets.only(top: 20),
-      itemCount: appointments.length,
+      itemCount: _appointments.length,
       itemBuilder: (context, index) {
-        final appointment = appointments[index];
+        final appointment = _appointments[index];
         return AppointmentCard(
           name: appointment['name']!,
           time: appointment['time']!,
@@ -187,14 +194,9 @@ class AppointmentCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(name,
-                        style: Theme.of(context).textTheme.titleMedium),
+                    Text(name, style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 4),
-                    Text('$time\n$type',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
+                    Text('$time\n$type', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
                   ],
                 ),
               ],

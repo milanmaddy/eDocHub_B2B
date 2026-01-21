@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
 import 'package:edochub_b2b/utils/theme_manager.dart';
+import 'package:edochub_b2b/utils/color_extensions.dart';
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback onBack;
@@ -50,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text('Specialization content goes here.',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
                 )
               ],
             ),
@@ -62,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text('Availability & Contact content goes here.',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
                 )
               ],
             ),
@@ -124,7 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 4),
         Text(
           'General Practitioner',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), fontSize: 16),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6), fontSize: 16),
         ),
       ],
     );
@@ -176,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: Center(
                     child:
-                        Text('Away', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))),
+                        Text('Away', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6)))),
               ),
             ),
           ),
@@ -238,7 +239,7 @@ class ProfileTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+        Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
         const SizedBox(height: 8),
         TextFormField(
           initialValue: initialValue,
@@ -250,7 +251,7 @@ class ProfileTextField extends StatelessWidget {
                 OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.2)),
             ),
           ),
         ),
