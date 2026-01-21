@@ -5,6 +5,13 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Load key properties
+val keyProperties = java.util.Properties()
+val keyPropertiesFile = rootProject.file("android/key.properties")
+if (keyPropertiesFile.exists()) {
+    keyProperties.load(java.io.FileInputStream(keyPropertiesFile))
+}
+
 android {
     namespace = "com.example.edochub_b2b"
     compileSdk = flutter.compileSdkVersion
@@ -17,6 +24,15 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    signingConfigs {
+        create("release") {
+            keyAlias = keyProperties["keyAlias"] as String
+            keyPassword = keyProperties["keyPassword"] as String
+            storeFile = file(keyProperties["storeFile"] as String)
+            storePassword = keyProperties["storePassword"] as String
+        }
     }
 
     defaultConfig {
@@ -34,7 +50,7 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
             
             // Enable code shrinking, obfuscation, and optimization
             isMinifyEnabled = true
