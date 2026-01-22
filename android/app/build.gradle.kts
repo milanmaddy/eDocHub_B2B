@@ -16,7 +16,7 @@ if (keyPropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.edochub_b2b"
+    namespace = "com.edochub.b2b"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -39,7 +39,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.edochub_b2b"
+        applicationId = "com.edochub.b2b"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -54,8 +54,8 @@ android {
             }
             signingConfig?.enableV1Signing = true
             signingConfig?.enableV2Signing = true
-            signingConfig?.enableV3Signing = true
-            signingConfig?.enableV4Signing = true
+            signingConfig?.enableV3Signing = false
+            signingConfig?.enableV4Signing = false
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
