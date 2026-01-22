@@ -1,4 +1,3 @@
-import 'package:edochub_b2b/utils/color_extensions.dart';
 import 'package:flutter/material.dart';
 
 class PebbleIconButton extends StatelessWidget {
@@ -25,12 +24,12 @@ class PebbleIconButton extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withOpacitySafe(0.08),
+            color: colorScheme.shadow.withOpacity(0.08),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: colorScheme.onSurface.withOpacitySafe(0.1),
+            color: colorScheme.onSurface.withOpacity(0.1),
             blurRadius: 1,
             spreadRadius: 1,
             offset: const Offset(0, -1),

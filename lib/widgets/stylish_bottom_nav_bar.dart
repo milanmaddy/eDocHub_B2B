@@ -1,4 +1,3 @@
-import 'package:edochub_b2b/utils/color_extensions.dart';
 import 'package:flutter/material.dart';
 
 class StylishBottomNavBar extends StatelessWidget {
@@ -26,7 +25,7 @@ class StylishBottomNavBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacitySafe(0.1),
+            color: colorScheme.shadow.withOpacity(0.1),
             blurRadius: 20,
             spreadRadius: 5,
           ),
@@ -70,7 +69,7 @@ class StylishBottomNavBar extends StatelessWidget {
                           curve: Curves.easeOut,
                           child: Icon(
                             isSelected ? (item.activeIcon as Icon).icon : (item.icon as Icon).icon,
-                            color: isSelected ? colorScheme.onSecondary : colorScheme.onSurface.withOpacitySafe(0.6),
+                            color: isSelected ? colorScheme.onSecondary : colorScheme.onSurface.withOpacity(0.6),
                           ),
                         ),
                         const SizedBox(height: 2),

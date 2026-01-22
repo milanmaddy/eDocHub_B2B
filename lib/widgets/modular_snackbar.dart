@@ -6,18 +6,19 @@ enum SnackbarType { success, error, info }
 void showModularSnackbar(BuildContext context, String message, {SnackbarType type = SnackbarType.info}) {
   Color backgroundColor;
   IconData iconData;
+  final colorScheme = Theme.of(context).colorScheme;
 
   switch (type) {
     case SnackbarType.success:
-      backgroundColor = Colors.green;
+      backgroundColor = colorScheme.primary;
       iconData = Icons.check_circle;
       break;
     case SnackbarType.error:
-      backgroundColor = Colors.red;
+      backgroundColor = colorScheme.error;
       iconData = Icons.error;
       break;
     case SnackbarType.info:
-      backgroundColor = Theme.of(context).colorScheme.secondary;
+      backgroundColor = colorScheme.secondary;
       iconData = Icons.info;
       break;
   }

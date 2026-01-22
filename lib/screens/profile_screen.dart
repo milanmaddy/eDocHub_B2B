@@ -1,7 +1,7 @@
+import 'package:edochub_b2b/widgets/expansion_tile_card.dart';
+import 'package:edochub_b2b/widgets/profile_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
-import 'package:edochub_b2b/utils/theme_manager.dart';
-import 'package:edochub_b2b/utils/color_extensions.dart';
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback onBack;
@@ -51,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text('Specialization content goes here.',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withAlpha(153))),
                 )
               ],
             ),
@@ -63,20 +63,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text('Availability & Contact content goes here.',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withAlpha(153))),
                 )
               ],
-            ),
-            const SizedBox(height: 12),
-            Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: SwitchListTile(
-                title: const Text('Dark Mode'),
-                value: themeNotifier.value == ThemeMode.dark,
-                onChanged: (value) {
-                  themeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
-                },
-              ),
             ),
             const SizedBox(height: 40),
             ModularButton(
@@ -107,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 radius: 16,
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 child: IconButton(
-                  icon: const Icon(Icons.edit, color: Colors.white, size: 16),
+                  icon: Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary, size: 16),
                   onPressed: () {},
                 ),
               ),
@@ -125,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 4),
         Text(
           'General Practitioner',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6), fontSize: 16),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withAlpha(153), fontSize: 16),
         ),
       ],
     );
@@ -177,85 +166,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: Center(
                     child:
-                        Text('Away', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6)))),
+                        Text('Away', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withAlpha(153)))),
               ),
             ),
           ),
         ],
       ),
-    );
-  }
-}
-
-class ExpansionTileCard extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-  final bool initiallyExpanded;
-
-  const ExpansionTileCard({
-    super.key,
-    required this.title,
-    required this.children,
-    this.initiallyExpanded = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ExpansionTile(
-        initiallyExpanded: initiallyExpanded,
-        title: Text(title,
-            style:
-                Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0).copyWith(top: 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: children,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ProfileTextField extends StatelessWidget {
-  final String label;
-  final String initialValue;
-  final int maxLines;
-
-  const ProfileTextField({
-    super.key,
-    required this.label,
-    required this.initialValue,
-    this.maxLines = 1,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
-        const SizedBox(height: 8),
-        TextFormField(
-          initialValue: initialValue,
-          maxLines: maxLines,
-          decoration: InputDecoration(
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.2)),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

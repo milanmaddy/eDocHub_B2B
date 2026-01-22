@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:edochub_b2b/utils/color_extensions.dart';
 
 class AnimatedSplashScreen extends StatefulWidget {
   const AnimatedSplashScreen({super.key});
@@ -69,7 +68,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                     const SizedBox(width: 16),
                     Container(
                       width: 1.5,
-                      color: colorScheme.primary.withOpacitySafe(0.8),
+                      color: colorScheme.primary.withAlpha(204),
                     ),
                     const SizedBox(width: 16),
                     Column(
@@ -97,7 +96,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                         Text(
                           'Your Wellness, in Your Hands.',
                           style: textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurface.withOpacitySafe(0.7),
+                            color: colorScheme.onSurface.withAlpha(179),
                           ),
                         ),
                       ],
@@ -113,7 +112,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                 child: Text(
                   'v1.0.0',
                   style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurface.withOpacitySafe(0.4)),
+                      color: colorScheme.onSurface.withAlpha(102)),
                 ),
               ),
             ),

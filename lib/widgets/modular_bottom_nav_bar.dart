@@ -20,7 +20,7 @@ class ModularBottomNavBar extends StatelessWidget {
       type: BottomNavigationBarType.fixed,
       backgroundColor: Theme.of(context).cardColor,
       selectedItemColor: Theme.of(context).colorScheme.primary,
-      unselectedItemColor: Colors.grey,
+      unselectedItemColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
       items: items,
     );
   }

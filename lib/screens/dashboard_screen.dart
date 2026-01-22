@@ -1,8 +1,9 @@
-
+import 'package:edochub_b2b/services/api_service.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
+import 'package:edochub_b2b/widgets/stat_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:edochub_b2b/utils/color_extensions.dart';
+import 'package:intl/intl.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -13,26 +14,89 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final PageController _pageController = PageController();
+  final ApiService _apiService = ApiService();
   int _currentPage = 0;
+  bool _isLoadingBanners = true;
+  List<dynamic> _banners = [];
+  bool _isLoadingUpNext = true;
+  Map<String, dynamic>? _upNextAppointment;
+  bool _isLoadingAgenda = true;
+  List<dynamic> _todaysAgenda = [];
+  bool _isLoadingStats = true;
+  Map<String, dynamic> _stats = {};
 
-  // Mock data for carousel banners
-  final List<Map<String, String>> _banners = [
-    {
-      "image": "https://placehold.co/600x200/png",
-      "title": "New Feature Available",
-      "subtitle": "Try our new video consultation service."
-    },
-    {
-      "image": "https://placehold.co/600x200/png",
-      "title": "Upcoming Conference",
-      "subtitle": "Join us at the annual healthcare summit."
-    },
-    {
-      "image": "https://placehold.co/600x200/png",
-      "title": "Health Tip of the Day",
-      "subtitle": "Stay hydrated for better overall health."
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchBanners();
+    _fetchUpNextAppointment();
+    _fetchTodaysAgenda();
+    _fetchStats();
+  }
+
+  Future<void> _fetchBanners() async {
+    try {
+      final data = await _apiService.get('banners');
+      if (!mounted) return;
+      setState(() {
+        _banners = data;
+        _isLoadingBanners = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoadingBanners = false;
+      });
+    }
+  }
+
+  Future<void> _fetchUpNextAppointment() async {
+    try {
+      final data = await _apiService.get('appointments/up-next');
+      if (!mounted) return;
+      setState(() {
+        _upNextAppointment = data;
+        _isLoadingUpNext = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoadingUpNext = false;
+      });
+    }
+  }
+
+  Future<void> _fetchTodaysAgenda() async {
+    try {
+      final data = await _apiService.get('appointments/today');
+      if (!mounted) return;
+      setState(() {
+        _todaysAgenda = data;
+        _isLoadingAgenda = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoadingAgenda = false;
+      });
+    }
+  }
+
+  Future<void> _fetchStats() async {
+    try {
+      final data = await _apiService.get('stats');
+      if (!mounted) return;
+      setState(() {
+        _stats = data;
+        _isLoadingStats = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoadingStats = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +132,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildStatsCards(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    if (_isLoadingStats) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return Wrap(
       spacing: 16.0, // Horizontal space between cards
       runSpacing: 16.0, // Vertical space between cards
@@ -76,21 +143,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
           width: MediaQuery.of(context).size.width / 2 - 28, // Responsive width
           child: StatCard(
               title: 'Total Appointments',
-              value: '12',
+              value: _stats['total_appointments']?.toString() ?? '0',
               color: colorScheme.primary),
         ),
         SizedBox(
           width: MediaQuery.of(context).size.width / 2 - 28, // Responsive width
           child: StatCard(
               title: 'Video Calls',
-              value: '5',
+              value: _stats['video_calls']?.toString() ?? '0',
               color: colorScheme.secondary),
         ),
         SizedBox(
           width: MediaQuery.of(context).size.width / 2 - 28, // Responsive width
           child: StatCard(
               title: 'Messages',
-              value: '3',
+              value: _stats['messages']?.toString() ?? '0',
               color: colorScheme.tertiary),
         ),
       ],
@@ -99,6 +166,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildCarousel(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    if (_isLoadingBanners) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_banners.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return Column(
       children: [
@@ -130,7 +203,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            colorScheme.surface.withOpacitySafe(0.9),
+                            colorScheme.surface.withAlpha(230),
                           ],
                         ),
                       ),
@@ -153,7 +226,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Text(
                             banner['subtitle']!,
                             style: TextStyle(
-                              color: colorScheme.onSurface.withOpacitySafe(0.9),
+                              color: colorScheme.onSurface.withAlpha(230),
                               fontSize: 14,
                             ),
                           ),
@@ -188,10 +261,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
       decoration: BoxDecoration(
         color: _currentPage == index
             ? colorScheme.primary
-            : colorScheme.onSurface.withOpacitySafe(0.3),
+            : colorScheme.onSurface.withAlpha(77),
         borderRadius: BorderRadius.circular(12),
       ),
     );
+  }
+
+  String _getTimeRemaining(String time) {
+    try {
+      final now = DateTime.now();
+      final parsedTime = DateFormat('HH:mm').parse(time);
+      final appointmentTime = DateTime(now.year, now.month, now.day, parsedTime.hour, parsedTime.minute);
+
+      final difference = appointmentTime.difference(now);
+
+      if (difference.isNegative) {
+        return 'Now';
+      } else if (difference.inMinutes < 60) {
+        return 'In ${difference.inMinutes} min';
+      } else {
+        return 'In ${difference.inHours} hours';
+      }
+    } catch (e) {
+      return '';
+    }
   }
 
   Widget _buildUpNext(BuildContext context) {
@@ -205,86 +298,95 @@ class _DashboardScreenState extends State<DashboardScreen> {
             style:
             textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacitySafe(0.05),
-                blurRadius: 15,
-                offset: const Offset(0,5),
-              )
-            ]
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Video Consultation',
-                    style: textTheme.titleMedium
-                        ?.copyWith(color: colorScheme.primary),
-                  ),
-                  Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: colorScheme.secondary,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.timer_outlined,
-                            color: colorScheme.onSecondary, size: 16),
-                        const SizedBox(width: 4),
-                        Text('In 5 min',
-                            style: TextStyle(
-                                color: colorScheme.onSecondary,
-                                fontWeight: FontWeight.bold)),
-                      ],
-                    ),
+        if (_isLoadingUpNext)
+          const Center(child: CircularProgressIndicator())
+        else if (_upNextAppointment == null)
+          const Center(child: Text('No upcoming appointments.'))
+        else
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.shadow.withAlpha(13),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
                   )
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text('Aarav Sharma', style: textTheme.titleLarge),
-              const SizedBox(height: 4),
-              Text('10:00 AM - 10:30 AM',
-                  style: textTheme.bodyMedium
-                      ?.copyWith(color: colorScheme.onSurface.withOpacitySafe(0.6))),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: ModularButton(
-                      onPressed: () {},
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                ]),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _upNextAppointment!['type'],
+                      style: textTheme.titleMedium
+                          ?.copyWith(color: colorScheme.primary),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: colorScheme.secondary,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
                         children: [
-                          Icon(Icons.video_call_outlined),
-                          SizedBox(width: 8),
-                          Text('Join Call'),
+                          Icon(Icons.timer_outlined,
+                              color: colorScheme.onSecondary, size: 16),
+                          const SizedBox(width: 4),
+                          Text(
+                              _getTimeRemaining(_upNextAppointment!['time']),
+                              style: TextStyle(
+                                  color: colorScheme.onSecondary,
+                                  fontWeight: FontWeight.bold)),
                         ],
                       ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(_upNextAppointment!['name'], style: textTheme.titleLarge),
+                const SizedBox(height: 4),
+                Text(_upNextAppointment!['time'],
+                    style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface.withAlpha(153))),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ModularButton(
+                        onPressed: () {
+                          // TODO: Implement join call functionality
+                        },
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.video_call_outlined),
+                            SizedBox(width: 8),
+                            Text('Join Call'),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ModularButton(
-                      buttonType: ButtonType.outlined,
-                      onPressed: () {},
-                      child: const Text('View Details'),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ModularButton(
+                        buttonType: ButtonType.outlined,
+                        onPressed: () {
+                          // TODO: Implement view details functionality
+                        },
+                        child: const Text('View Details'),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
       ],
     );
   }
@@ -298,10 +400,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
             style:
             textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
-        _buildAgendaItem(context, 'Rohan Patel', '11:00 AM - In-person',
-            Icons.person_outline),
-        _buildAgendaItem(context, 'Priya Singh', '1:30 PM - Video Call',
-            Icons.videocam_outlined),
+        if (_isLoadingAgenda)
+          const Center(child: CircularProgressIndicator())
+        else if (_todaysAgenda.isEmpty)
+          const Center(child: Text('No appointments for today.'))
+        else
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _todaysAgenda.length,
+            itemBuilder: (context, index) {
+              final appointment = _todaysAgenda[index];
+              return _buildAgendaItem(
+                  context,
+                  appointment['name'],
+                  appointment['time'],
+                  appointment['type'] == 'video'
+                      ? Icons.videocam_outlined
+                      : Icons.person_outline);
+            },
+          ),
       ],
     );
   }
@@ -320,46 +438,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             style: Theme.of(context)
                 .textTheme
                 .bodySmall
-                ?.copyWith(color: colorScheme.onSurface.withOpacitySafe(0.6))),
-        trailing: Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
-        onTap: () {},
-      ),
-    );
-  }
-}
-
-class StatCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final Color color;
-
-  const StatCard(
-      {super.key,
-        required this.title,
-        required this.value,
-        required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title,
-                style: textTheme.bodyMedium?.copyWith(
-                    color:
-                    Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: textTheme.headlineMedium
-                  ?.copyWith(color: color, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
+                ?.copyWith(color: colorScheme.onSurface.withAlpha(153))),
+        trailing:
+        Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
+        onTap: () {
+          // TODO: Implement appointment details navigation
+        },
       ),
     );
   }

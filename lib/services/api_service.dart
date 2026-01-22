@@ -1,16 +1,47 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+
+import 'package:dio/dio.dart';
+import 'package:edochub_b2b/utils/api_endpoints.dart';
 
 class ApiService {
-  static const String _baseUrl = 'https://api.example.com';
+  final Dio _dio = Dio();
+
+  Future<Response> login(String email, String password) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.login,
+        data: {
+          'email': email,
+          'password': password,
+        },
+      );
+      return response;
+    } catch (e) {
+      throw Exception('Failed to login: $e');
+    }
+  }
+
+  Future<Response> register(String name, String email, String password) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.register,
+        data: {
+          'name': name,
+          'email': email,
+          'password': password,
+        },
+      );
+      return response;
+    } catch (e) {
+      throw Exception('Failed to register: $e');
+    }
+  }
 
   Future<dynamic> get(String endpoint) async {
-    final response = await http.get(Uri.parse('$_baseUrl/$endpoint'));
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to load data from API');
+    try {
+      final response = await _dio.get('${ApiEndpoints.baseUrl}/$endpoint');
+      return response.data;
+    } catch (e) {
+      throw Exception('Failed to fetch data from $endpoint: $e');
     }
   }
 }

@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'package:edochub_b2b/services/api_service.dart';
+import 'package:edochub_b2b/widgets/appointment_card.dart';
 import 'package:flutter/material.dart';
-import 'package:edochub_b2b/widgets/modular_button.dart';
-import 'package:edochub_b2b/utils/color_extensions.dart';
 import 'package:edochub_b2b/widgets/modular_snackbar.dart';
 
 class AppointmentsScreen extends StatefulWidget {
@@ -16,20 +15,36 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
   int _selectedSegment = 0;
   bool _isLoading = true;
   List<dynamic> _appointments = [];
+  List<dynamic> _filteredAppointments = [];
   final ApiService _apiService = ApiService();
+  final List<String> _statuses = ['pending', 'confirmed', 'completed'];
+  String _searchTerm = '';
+  Timer? _debouncer;
 
   @override
   void initState() {
     super.initState();
-    _fetchAppointments();
+    _fetchAppointments(_statuses[_selectedSegment]);
   }
 
-  Future<void> _fetchAppointments() async {
+  @override
+  void dispose() {
+    _debouncer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _fetchAppointments(String status) async {
+    setState(() {
+      _isLoading = true;
+      _appointments = [];
+      _filteredAppointments = [];
+    });
     try {
-      final data = await _apiService.get('appointments');
+      final data = await _apiService.get('appointments?status=$status');
       if (!mounted) return;
       setState(() {
         _appointments = data;
+        _filteredAppointments = data;
         _isLoading = false;
       });
     } catch (e) {
@@ -41,6 +56,21 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
     }
   }
 
+  void _filterAppointments() {
+    List<dynamic> filteredList = [];
+    if (_searchTerm.isEmpty) {
+      filteredList = _appointments;
+    } else {
+      filteredList = _appointments
+          .where((appointment) =>
+              appointment['name']!.toLowerCase().contains(_searchTerm.toLowerCase()))
+          .toList();
+    }
+    setState(() {
+      _filteredAppointments = filteredList;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,9 +80,18 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
           children: [
             const SizedBox(height: 16),
             TextField(
+              onChanged: (value) {
+                _debouncer?.cancel();
+                _debouncer = Timer(const Duration(milliseconds: 500), () {
+                  setState(() {
+                    _searchTerm = value;
+                  });
+                  _filterAppointments();
+                });
+              },
               decoration: InputDecoration(
                 hintText: 'Search by patient or date',
-                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6)),
+                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.onSurface.withAlpha(153)),
                 filled: true,
                 fillColor: Theme.of(context).cardColor,
                 border: OutlineInputBorder(
@@ -101,6 +140,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
           setState(() {
             _selectedSegment = index;
           });
+          _fetchAppointments(_statuses[index]);
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
@@ -118,7 +158,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                   fontWeight: FontWeight.bold,
                   color: isSelected
                       ? Theme.of(context).colorScheme.onPrimary
-                      : Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6),
+                      : Theme.of(context).colorScheme.onSurface.withAlpha(153),
                 ),
               ),
               if (count != null) ...[
@@ -126,7 +166,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                 CircleAvatar(
                   radius: 10,
                   backgroundColor: isSelected
-                      ? Theme.of(context).colorScheme.onPrimary.withOpacitySafe(0.2)
+                      ? Theme.of(context).colorScheme.onPrimary.withAlpha(51)
                       : Theme.of(context).colorScheme.secondary,
                   child: Text(count,
                       style: TextStyle(
@@ -145,11 +185,16 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
   }
 
   Widget _buildAppointmentsList() {
+    if (_filteredAppointments.isEmpty) {
+      return const Center(
+        child: Text('No appointments found.'),
+      );
+    }
     return ListView.builder(
       padding: const EdgeInsets.only(top: 20),
-      itemCount: _appointments.length,
+      itemCount: _filteredAppointments.length,
       itemBuilder: (context, index) {
-        final appointment = _appointments[index];
+        final appointment = _filteredAppointments[index];
         return AppointmentCard(
           name: appointment['name']!,
           time: appointment['time']!,
@@ -157,76 +202,6 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
           avatarUrl: appointment['avatar']!,
         );
       },
-    );
-  }
-}
-
-class AppointmentCard extends StatelessWidget {
-  final String name;
-  final String time;
-  final String type;
-  final String avatarUrl;
-
-  const AppointmentCard({
-    super.key,
-    required this.name,
-    required this.time,
-    required this.type,
-    required this.avatarUrl,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundImage: NetworkImage(avatarUrl),
-                ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(name, style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: 4),
-                    Text('$time\n$type', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: ModularButton(
-                    buttonType: ButtonType.outlined,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.error,
-                      side: BorderSide(color: Theme.of(context).colorScheme.error),
-                    ),
-                    onPressed: () {},
-                    child: const Text('Decline'),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ModularButton(
-                    onPressed: () {},
-                    child: const Text('Accept'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:edochub_b2b/screens/main_app_screen.dart';
 import 'package:edochub_b2b/screens/mobile_verification_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -47,8 +48,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF4C6A4E)),
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.fromSeed(seedColor: Theme.of(context).colorScheme.primary),
           ),
           child: child!,
         );
@@ -65,7 +66,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -76,161 +77,172 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           padding: const EdgeInsets.all(24.0),
           child: Form(
             key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Create Your Account',
-                  style: theme.textTheme.headlineLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
+            child: AnimationLimiter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: AnimationConfiguration.toStaggeredList(
+                  duration: const Duration(milliseconds: 375),
+                  childAnimationBuilder: (widget) => SlideAnimation(
+                    verticalOffset: 50.0,
+                    child: FadeInAnimation(
+                      child: widget,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Fill in the details below to get started.',
-                  style: theme.textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 32),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: _inputDecoration('Full Name'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your name';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _addressController,
-                  decoration: _inputDecoration('Address'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your address';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _ageController,
-                  decoration: _inputDecoration('Age'),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your age';
-                    }
-                    if (int.tryParse(value) == null) {
-                      return 'Please enter a valid number';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  decoration: _inputDecoration('Gender'),
-                  items: _genders.map((String gender) {
-                    return DropdownMenuItem<String>(
-                      value: gender,
-                      child: Text(gender),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    // setState(() {
-                    //   _selectedGender = newValue;
-                    // });
-                  },
-                  validator: (value) => value == null ? 'Please select a gender' : null,
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  decoration: _inputDecoration('Marital Status'),
-                  items: _maritalStatuses.map((String status) {
-                    return DropdownMenuItem<String>(
-                      value: status,
-                      child: Text(status),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    // setState(() {
-                    //   _selectedMaritalStatus = newValue;
-                    // });
-                  },
-                  validator: (value) => value == null ? 'Please select a marital status' : null,
-                ),
-                const SizedBox(height: 16),
-                GestureDetector(
-                  onTap: () => _selectDate(context),
-                  child: AbsorbPointer(
-                    child: TextFormField(
-                      decoration: _inputDecoration(
-                        _selectedDateOfBirth == null
-                            ? 'Select Date of Birth'
-                            : 'DOB: ${_selectedDateOfBirth!.toLocal()}'.split(' ')[0],
-                      ).copyWith(
-                        suffixIcon: const Icon(Icons.calendar_today),
+                  children: [
+                    Text(
+                      'Create Your Account',
+                      style: theme.textTheme.headlineLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
                       ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Fill in the details below to get started.',
+                      style: theme.textTheme.titleMedium
+                          ?.copyWith(color: theme.colorScheme.onSurface.withAlpha(153)),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: _inputDecoration('Full Name'),
                       validator: (value) {
-                        if (_selectedDateOfBirth == null) {
-                          return 'Please select your date of birth';
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your name';
                         }
                         return null;
                       },
                     ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  decoration: _inputDecoration('Service Type'),
-                  items: _serviceTypes.map((String service) {
-                    return DropdownMenuItem<String>(
-                      value: service,
-                      child: Text(service),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedServiceType = newValue;
-                    });
-                  },
-                  validator: (value) => value == null ? 'Please select a service type' : null,
-                ),
-                const SizedBox(height: 32),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _addressController,
+                      decoration: _inputDecoration('Address'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your address';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => MobileVerificationScreen(
-                              serviceType: _selectedServiceType!)));
-                    }
-                  },
-                  child: const Text('Continue', style: TextStyle(fontSize: 16, color: Colors.white)),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _ageController,
+                      decoration: _inputDecoration('Age'),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your age';
+                        }
+                        if (int.tryParse(value) == null) {
+                          return 'Please enter a valid number';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      decoration: _inputDecoration('Gender'),
+                      items: _genders.map((String gender) {
+                        return DropdownMenuItem<String>(
+                          value: gender,
+                          child: Text(gender),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {},
+                      validator: (value) =>
+                          value == null ? 'Please select a gender' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      decoration: _inputDecoration('Marital Status'),
+                      items: _maritalStatuses.map((String status) {
+                        return DropdownMenuItem<String>(
+                          value: status,
+                          child: Text(status),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {},
+                      validator: (value) =>
+                          value == null ? 'Please select a marital status' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    GestureDetector(
+                      onTap: () => _selectDate(context),
+                      child: AbsorbPointer(
+                        child: TextFormField(
+                          decoration: _inputDecoration(
+                            _selectedDateOfBirth == null
+                                ? 'Select Date of Birth'
+                                : 'DOB: ${_selectedDateOfBirth!.toLocal()}'
+                                    .split(' ')[0],
+                          ).copyWith(
+                            suffixIcon: const Icon(Icons.calendar_today),
+                          ),
+                          validator: (value) {
+                            if (_selectedDateOfBirth == null) {
+                              return 'Please select your date of birth';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      decoration: _inputDecoration('Service Type'),
+                      items: _serviceTypes.map((String service) {
+                        return DropdownMenuItem<String>(
+                          value: service,
+                          child: Text(service),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          _selectedServiceType = newValue;
+                        });
+                      },
+                      validator: (value) =>
+                          value == null ? 'Please select a service type' : null,
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => MobileVerificationScreen(
+                                  serviceType: _selectedServiceType!)));
+                        }
+                      },
+                      child: Text('Continue',
+                          style: TextStyle(fontSize: 16, color: theme.colorScheme.onPrimary)),
+                    ),
+                    const SizedBox(height: 16),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                              builder: (context) => const MainAppScreen()),
+                        );
+                      },
+                      child: Text(
+                        'Skip for now',
+                        style: TextStyle(
+                            color: theme.colorScheme.primary, fontSize: 16),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => const MainAppScreen()),
-                    );
-                  },
-                  child: Text(
-                    'Skip for now',
-                    style: TextStyle(color: theme.colorScheme.primary, fontSize: 16),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -243,7 +255,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     return InputDecoration(
       labelText: labelText,
       filled: true,
-      fillColor: Colors.white,
+      fillColor: theme.colorScheme.surface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.0),
         borderSide: BorderSide.none,
@@ -252,7 +264,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         borderRadius: BorderRadius.circular(12.0),
         borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
       ),
-      labelStyle: TextStyle(color: Colors.grey[600]),
+      labelStyle: TextStyle(color: theme.colorScheme.onSurface.withAlpha(153)),
     );
   }
 }
