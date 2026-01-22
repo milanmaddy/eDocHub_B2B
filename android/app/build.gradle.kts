@@ -44,6 +44,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        multiDexEnabled = true
     }
 
     buildTypes {
@@ -53,6 +54,8 @@ android {
             }
             signingConfig?.enableV1Signing = true
             signingConfig?.enableV2Signing = true
+            signingConfig?.enableV3Signing = true
+            signingConfig?.enableV4Signing = true
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
