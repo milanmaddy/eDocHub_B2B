@@ -33,7 +33,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     // Navigate after a fixed time, no longer waits for location.
     Timer(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/welcome');
+        Navigator.of(context).pushReplacementNamed('/location');
       }
     });
   }

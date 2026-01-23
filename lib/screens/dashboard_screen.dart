@@ -1,4 +1,5 @@
 import 'package:edochub_b2b/services/api_service.dart';
+import 'package:edochub_b2b/utils/color_extensions.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
 import 'package:edochub_b2b/widgets/stat_card.dart';
 import 'package:flutter/material.dart';
@@ -135,26 +136,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (_isLoadingStats) {
       return const Center(child: CircularProgressIndicator());
     }
-    return Wrap(
-      spacing: 16.0, // Horizontal space between cards
-      runSpacing: 16.0, // Vertical space between cards
+    return Row(
       children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.width / 2 - 28, // Responsive width
+        Expanded(
           child: StatCard(
               title: 'Total Appointments',
               value: _stats['total_appointments']?.toString() ?? '0',
               color: colorScheme.primary),
         ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width / 2 - 28, // Responsive width
+        const SizedBox(width: 16),
+        Expanded(
           child: StatCard(
               title: 'Video Calls',
               value: _stats['video_calls']?.toString() ?? '0',
               color: colorScheme.secondary),
         ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width / 2 - 28, // Responsive width
+        const SizedBox(width: 16),
+        Expanded(
           child: StatCard(
               title: 'Messages',
               value: _stats['messages']?.toString() ?? '0',
@@ -203,7 +201,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            colorScheme.surface.withAlpha(230),
+                            colorScheme.surface.withOpacitySafe(0.9),
                           ],
                         ),
                       ),
@@ -226,7 +224,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Text(
                             banner['subtitle']!,
                             style: TextStyle(
-                              color: colorScheme.onSurface.withAlpha(230),
+                              color: colorScheme.onSurface.withOpacitySafe(0.9),
                               fontSize: 14,
                             ),
                           ),
@@ -261,7 +259,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       decoration: BoxDecoration(
         color: _currentPage == index
             ? colorScheme.primary
-            : colorScheme.onSurface.withAlpha(77),
+            : colorScheme.onSurface.withOpacitySafe(0.3),
         borderRadius: BorderRadius.circular(12),
       ),
     );
@@ -271,16 +269,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       final now = DateTime.now();
       final parsedTime = DateFormat('HH:mm').parse(time);
-      final appointmentTime = DateTime(now.year, now.month, now.day, parsedTime.hour, parsedTime.minute);
+      final appointmentTime = DateTime(
+          now.year, now.month, now.day, parsedTime.hour, parsedTime.minute);
 
       final difference = appointmentTime.difference(now);
 
       if (difference.isNegative) {
         return 'Now';
       } else if (difference.inMinutes < 60) {
-        return 'In ${difference.inMinutes} min';
+        final minutes = difference.inMinutes;
+        return 'In $minutes min${minutes == 1 ? '' : 's'}';
       } else {
-        return 'In ${difference.inHours} hours';
+        final hours = difference.inHours;
+        return 'In $hours hour${hours == 1 ? '' : 's'}';
       }
     } catch (e) {
       return '';
@@ -310,7 +311,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: colorScheme.shadow.withAlpha(13),
+                    color: colorScheme.shadow.withOpacitySafe(0.05),
                     blurRadius: 15,
                     offset: const Offset(0, 5),
                   )
@@ -353,15 +354,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 4),
                 Text(_upNextAppointment!['time'],
                     style: textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface.withAlpha(153))),
+                        color: colorScheme.onSurface.withOpacitySafe(0.6))),
                 const SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(
                       child: ModularButton(
-                        onPressed: () {
-                          // TODO: Implement join call functionality
-                        },
+                        onPressed: () {},
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -376,9 +375,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Expanded(
                       child: ModularButton(
                         buttonType: ButtonType.outlined,
-                        onPressed: () {
-                          // TODO: Implement view details functionality
-                        },
+                        onPressed: () {},
                         child: const Text('View Details'),
                       ),
                     ),
@@ -438,12 +435,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             style: Theme.of(context)
                 .textTheme
                 .bodySmall
-                ?.copyWith(color: colorScheme.onSurface.withAlpha(153))),
+                ?.copyWith(color: colorScheme.onSurface.withOpacitySafe(0.6))),
         trailing:
         Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
-        onTap: () {
-          // TODO: Implement appointment details navigation
-        },
+        onTap: () {},
       ),
     );
   }
