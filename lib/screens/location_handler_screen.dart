@@ -16,27 +16,39 @@ class _LocationHandlerScreenState extends State<LocationHandlerScreen> {
   }
 
   Future<void> _checkLocationPermission() async {
-    final status = await Permission.location.status;
-    if (status.isGranted) {
+    try {
+      final status = await Permission.location.status;
+      if (status.isGranted) {
+        _navigateToNextScreen();
+      } else {
+        _requestLocationPermission();
+      }
+    } catch (e) {
+      debugPrint('Error checking location permission: $e');
       _navigateToNextScreen();
-    } else {
-      _requestLocationPermission();
     }
   }
 
   Future<void> _requestLocationPermission() async {
-    final status = await Permission.location.request();
-    if (status.isGranted) {
-      _navigateToNextScreen();
-    } else {
-      // Handle the case where the user denies the permission
-      // For now, we'll just navigate to the welcome screen.
+    try {
+      final status = await Permission.location.request();
+      if (status.isGranted) {
+        _navigateToNextScreen();
+      } else {
+        // Handle the case where the user denies the permission
+        // For now, we'll just navigate to the welcome screen.
+        _navigateToNextScreen();
+      }
+    } catch (e) {
+      debugPrint('Error requesting location permission: $e');
       _navigateToNextScreen();
     }
   }
 
   void _navigateToNextScreen() {
-    Navigator.of(context).pushReplacementNamed('/welcome');
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/welcome');
+    }
   }
 
   @override

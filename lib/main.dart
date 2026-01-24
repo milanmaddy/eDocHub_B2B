@@ -15,6 +15,10 @@ void main() {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      FlutterError.onError = (FlutterErrorDetails details) {
+        debugPrint('Flutter Error: ${details.exceptionAsString()}');
+        debugPrintStack(stackTrace: details.stack);
+      };
       try {
         await dotenv.load(fileName: ".env");
       } catch (e) {
@@ -23,8 +27,8 @@ void main() {
       runApp(const MyApp());
     },
     (Object error, StackTrace stackTrace) {
-      debugPrint('Caught error: $error');
-      debugPrint('Stack trace: $stackTrace');
+      debugPrint('Uncaught error: $error');
+      debugPrintStack(stackTrace: stackTrace);
     },
   );
 }
