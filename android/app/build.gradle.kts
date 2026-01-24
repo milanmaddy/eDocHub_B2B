@@ -29,6 +29,10 @@ android {
         jvmTarget = "11"
     }
 
+    tasks.withType<JavaCompile>().configureEach {
+        options.compilerArgs.addAll(listOf("-Xlint:-options"))
+    }
+
     signingConfigs {
         create("release") {
             keyAlias = keyProperties.getProperty("keyAlias")
