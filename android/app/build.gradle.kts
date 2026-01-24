@@ -49,6 +49,11 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled = true
+        
+        // Split APKs by ABI for smaller downloads
+        ndk {
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
+        }
     }
 
     buildTypes {
@@ -66,6 +71,26 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
+    }
+
+    // Generate split APKs by architecture (smaller download size)
+    bundle {
+        language {
+            // Disable language splits to keep all languages
+            enableSplit = false
+        }
+        density {
+            // Disable density splits to keep all densities
+            enableSplit = false
+        }
+        abi {
+            // Enable ABI splits for smaller APKs
+            enableSplit = true
         }
     }
 }
