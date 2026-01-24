@@ -1,7 +1,9 @@
-class ApiEndpoints {
-  static const String baseUrl = 'https://yourapi.com'; 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-  static const String login = '$baseUrl/login';
-  static const String register = '$baseUrl/register';
-  static const String appointments = '$baseUrl/appointments';
+class ApiEndpoints {
+  static final String baseUrl = dotenv.env['BASE_URL']!;
+
+  static final String login = '$baseUrl/login';
+  static final String register = '$baseUrl/register';
+  static final String appointments = '$baseUrl/appointments';
 }

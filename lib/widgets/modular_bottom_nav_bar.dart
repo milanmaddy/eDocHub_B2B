@@ -1,3 +1,4 @@
+import 'package:edochub_b2b/utils/color_extensions.dart';
 import 'package:flutter/material.dart';
 
 class ModularBottomNavBar extends StatelessWidget {
@@ -20,7 +21,7 @@ class ModularBottomNavBar extends StatelessWidget {
       type: BottomNavigationBarType.fixed,
       backgroundColor: Theme.of(context).cardColor,
       selectedItemColor: Theme.of(context).colorScheme.primary,
-      unselectedItemColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+      unselectedItemColor: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6),
       items: items,
     );
   }

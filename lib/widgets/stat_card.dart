@@ -1,3 +1,4 @@
+import 'package:edochub_b2b/utils/color_extensions.dart';
 import 'package:flutter/material.dart';
 
 class StatCard extends StatelessWidget {
@@ -23,7 +24,7 @@ class StatCard extends StatelessWidget {
             Text(title,
                 style: textTheme.bodyMedium?.copyWith(
                     color:
-                    Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+                    Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
             const SizedBox(height: 8),
             Text(
               value,

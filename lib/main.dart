@@ -1,13 +1,16 @@
 
 import 'package:edochub_b2b/screens/animated_splash_screen.dart';
+import 'package:edochub_b2b/screens/location_handler_screen.dart';
 import 'package:edochub_b2b/screens/login_screen.dart';
 import 'package:edochub_b2b/screens/main_app_screen.dart';
 import 'package:edochub_b2b/screens/registration_screen.dart';
 import 'package:edochub_b2b/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -42,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegistrationScreen(),
         '/main': (context) => const MainAppScreen(),
+        '/location':(context) => const LocationHandlerScreen(),
       },
     );
   }

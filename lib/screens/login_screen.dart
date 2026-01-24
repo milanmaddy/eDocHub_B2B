@@ -1,3 +1,4 @@
+import 'package:edochub_b2b/utils/color_extensions.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -44,7 +45,7 @@ class LoginScreen extends StatelessWidget {
                           Text(
                             'Log in to your account to continue',
                             style: textTheme.bodyLarge?.copyWith(
-                                color: colorScheme.onSurface.withOpacity(0.7)),
+                                color: colorScheme.onSurface.withOpacitySafe(0.7)),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 32),

@@ -1,3 +1,4 @@
+import 'package:edochub_b2b/utils/color_extensions.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
 import 'package:flutter/material.dart';
 
@@ -36,7 +37,7 @@ class AppointmentCard extends StatelessWidget {
                   children: [
                     Text(name, style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 4),
-                    Text('$time\n$type', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+                    Text('$time\n$type', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacitySafe(0.6))),
                   ],
                 ),
               ],
