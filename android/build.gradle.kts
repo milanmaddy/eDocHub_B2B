@@ -5,6 +5,10 @@ allprojects {
     }
 }
 
+tasks.withType<JavaCompile> {
+    options.compilerArgs.addAll(listOf("-Xlint:-options"))
+}
+
 val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")
