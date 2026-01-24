@@ -10,7 +10,7 @@ import java.io.FileInputStream
 
 // Load key properties
 val keyProperties = Properties()
-val keyPropertiesFile = rootProject.file("android/key.properties")
+val keyPropertiesFile = file("../key.properties")
 if (keyPropertiesFile.exists()) {
     keyProperties.load(FileInputStream(keyPropertiesFile))
 }
@@ -37,7 +37,7 @@ android {
         create("release") {
             keyAlias = keyProperties.getProperty("keyAlias")
             keyPassword = keyProperties.getProperty("keyPassword")
-            storeFile = keyProperties.getProperty("storeFile")?.let { file(it) }
+            storeFile = file(keyProperties.getProperty("storeFile"))
             storePassword = keyProperties.getProperty("storePassword")
         }
     }
@@ -53,9 +53,7 @@ android {
 
     buildTypes {
         release {
-            if (keyPropertiesFile.exists()) {
-                signingConfig = signingConfigs.getByName("release")
-            }
+            signingConfig = signingConfigs.getByName("release")
             signingConfig?.enableV1Signing = true
             signingConfig?.enableV2Signing = true
             signingConfig?.enableV3Signing = false
