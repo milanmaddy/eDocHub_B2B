@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:edochub_b2b/screens/animated_splash_screen.dart';
 import 'package:edochub_b2b/screens/location_handler_screen.dart';
 import 'package:edochub_b2b/screens/login_screen.dart';
@@ -9,9 +11,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Future<void> main() async {
-  await dotenv.load(fileName: ".env");
-  runApp(const MyApp());
+void main() {
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      try {
+        await dotenv.load(fileName: ".env");
+      } catch (e) {
+        debugPrint('Warning: Could not load .env file: $e');
+      }
+      runApp(const MyApp());
+    },
+    (Object error, StackTrace stackTrace) {
+      debugPrint('Caught error: $error');
+      debugPrint('Stack trace: $stackTrace');
+    },
+  );
 }
 
 class MyApp extends StatelessWidget {
