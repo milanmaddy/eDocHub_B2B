@@ -29,7 +29,11 @@ class AppointmentCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundImage: NetworkImage(avatarUrl),
+                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                  child: Icon(
+                    Icons.person,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Column(

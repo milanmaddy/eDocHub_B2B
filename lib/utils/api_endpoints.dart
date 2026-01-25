@@ -1,9 +1,10 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiEndpoints {
-  static final String baseUrl = dotenv.env['BASE_URL']!;
+  // Use a default if BASE_URL is not set
+  static final String baseUrl = dotenv.env['BASE_URL'] ?? 'https://api.example.com';
 
-  static final String login = '$baseUrl/login';
-  static final String register = '$baseUrl/register';
-  static final String appointments = '$baseUrl/appointments';
+  static String get login => '$baseUrl/login';
+  static String get register => '$baseUrl/register';
+  static String get appointments => '$baseUrl/appointments';
 }

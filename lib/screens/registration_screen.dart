@@ -62,6 +62,38 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
+  int _calculateAge(DateTime dateOfBirth) {
+    final today = DateTime.now();
+    int age = today.year - dateOfBirth.year;
+    if (today.month < dateOfBirth.month ||
+        (today.month == dateOfBirth.month && today.day < dateOfBirth.day)) {
+      age--;
+    }
+    return age;
+  }
+
+  void _showAgeRestrictionDialog() {
+    final theme = Theme.of(context);
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Age Restriction'),
+        content: const Text(
+          'You must be at least 18 years old to register for this service. Please try again when you turn 18.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -218,6 +250,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
+                          // Check if user is at least 18 years old
+                          final age = _calculateAge(_selectedDateOfBirth!);
+                          if (age < 18) {
+                            _showAgeRestrictionDialog();
+                            return;
+                          }
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => MobileVerificationScreen(
                                   serviceType: _selectedServiceType!)));

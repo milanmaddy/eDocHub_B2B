@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:edochub_b2b/screens/animated_splash_screen.dart';

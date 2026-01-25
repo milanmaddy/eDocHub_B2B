@@ -85,9 +85,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Stack(
           clipBehavior: Clip.none,
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage('https://placehold.co/100x100/png'), // Placeholder
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              child: Icon(
+                Icons.person,
+                size: 50,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
             Positioned(
               bottom: 0,

@@ -30,10 +30,13 @@ class DashboardHeader extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: onProfileTap,
-                  child: const CircleAvatar(
+                  child: CircleAvatar(
                     radius: 24,
-                    backgroundImage:
-                        NetworkImage('https://placehold.co/100x100/png'),
+                    backgroundColor: colorScheme.primaryContainer,
+                    child: Icon(
+                      Icons.person,
+                      color: colorScheme.primary,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -50,24 +53,27 @@ class DashboardHeader extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_outlined,
-                            size: 14,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              userLocation,
-                              style: textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                      SizedBox(
+                        height: 18,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: 14,
+                              color: colorScheme.onSurfaceVariant,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                userLocation,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
