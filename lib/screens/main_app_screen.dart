@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:edochub_b2b/screens/appointments_screen.dart';
 import 'package:edochub_b2b/screens/dashboard_screen.dart';
 import 'package:edochub_b2b/screens/messages_screen.dart';
@@ -8,6 +9,7 @@ import 'package:edochub_b2b/widgets/stylish_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:edochub_b2b/state/app_state.dart';
 
 class MainAppScreen extends StatefulWidget {
   const MainAppScreen({super.key});
@@ -19,11 +21,14 @@ class MainAppScreen extends StatefulWidget {
 class _MainAppScreenState extends State<MainAppScreen> {
   int _selectedIndex = 0;
   String _location = 'Loading location...'; // Initial display text
+  StreamSubscription<Position>? _positionSub;
+  Timer? _geocodeDebounce;
 
   @override
   void initState() {
     super.initState();
-    _determinePosition(); // Fetch location when the screen loads
+    _determinePosition();
+    _subscribeToLocation();
   }
 
   Future<void> _determinePosition() async {
@@ -84,6 +89,34 @@ class _MainAppScreenState extends State<MainAppScreen> {
     }
   }
 
+  void _subscribeToLocation() {
+    const settings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 25,
+    );
+    _positionSub = Geolocator.getPositionStream(locationSettings: settings).listen((pos) {
+      _geocodeDebounce?.cancel();
+      _geocodeDebounce = Timer(const Duration(seconds: 2), () async {
+        try {
+          final placemarks = await placemarkFromCoordinates(pos.latitude, pos.longitude);
+          final place = placemarks.first;
+          if (mounted) {
+            setState(() {
+              _location = "${place.locality}, ${place.administrativeArea}";
+            });
+          }
+        } catch (_) {}
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _positionSub?.cancel();
+    _geocodeDebounce?.cancel();
+    super.dispose();
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -99,17 +132,85 @@ class _MainAppScreenState extends State<MainAppScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> screens = [
-      const DashboardScreen(),
-      const AppointmentsScreen(),
-      const Scaffold(
-        body: Center(
-          child: Text('Patients Screen'),
+    final type = AppState.I.serviceType.value;
+    List<Widget> screens;
+    List<BottomNavigationBarItem> items;
+    if (type == 'Doctor') {
+      screens = [
+        const DashboardScreen(),
+        const AppointmentsScreen(),
+        const Scaffold(
+          body: Center(
+            child: Text('Patients Screen'),
+          ),
         ),
-      ),
-      const MessagesScreen(),
-      ProfileScreen(onBack: () => _onItemTapped(0)),
-    ];
+        const MessagesScreen(),
+        ProfileScreen(onBack: () => _onItemTapped(0)),
+      ];
+      items = const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.dashboard_outlined),
+          activeIcon: Icon(Icons.dashboard),
+          label: 'Dashboard',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.calendar_today_outlined),
+          activeIcon: Icon(Icons.calendar_today),
+          label: 'Appointments',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.people_alt_outlined),
+          activeIcon: Icon(Icons.people_alt),
+          label: 'Patients',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.message_outlined),
+          activeIcon: Icon(Icons.message),
+          label: 'Messages',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_outline),
+          activeIcon: Icon(Icons.person),
+          label: 'Profile',
+        ),
+      ];
+    } else {
+      screens = [
+        const DashboardScreen(),
+        const Scaffold(
+          body: Center(
+            child: Text('Tasks'),
+          ),
+        ),
+        const MessagesScreen(),
+        ProfileScreen(onBack: () => _onItemTapped(0)),
+      ];
+      items = const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.dashboard_outlined),
+          activeIcon: Icon(Icons.dashboard),
+          label: 'Dashboard',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.assignment_outlined),
+          activeIcon: Icon(Icons.assignment),
+          label: 'Tasks',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.message_outlined),
+          activeIcon: Icon(Icons.message),
+          label: 'Messages',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_outline),
+          activeIcon: Icon(Icons.person),
+          label: 'Profile',
+        ),
+      ];
+    }
+    if (_selectedIndex >= screens.length) {
+      _selectedIndex = 0;
+    }
 
     return Scaffold(
       extendBody: true,
@@ -135,33 +236,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
       bottomNavigationBar: StylishBottomNavBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today_outlined),
-            activeIcon: Icon(Icons.calendar_today),
-            label: 'Appointments',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people_alt_outlined),
-            activeIcon: Icon(Icons.people_alt),
-            label: 'Patients',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message_outlined),
-            activeIcon: Icon(Icons.message),
-            label: 'Messages',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        items: items,
       ),
     );
   }

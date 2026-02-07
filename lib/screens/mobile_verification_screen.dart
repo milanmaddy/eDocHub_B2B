@@ -1,4 +1,5 @@
 import 'package:edochub_b2b/screens/document_upload_screen.dart';
+import 'package:edochub_b2b/screens/main_app_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
 
@@ -56,8 +57,15 @@ class MobileVerificationScreenState extends State<MobileVerificationScreen> {
               onPressed: () {
                 // Verify OTP logic
 
-                // For now, navigate to document upload screen
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => DocumentUploadScreen(serviceType: widget.serviceType)));
+                if (widget.serviceType == 'Doctor') {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          DocumentUploadScreen(serviceType: widget.serviceType)));
+                } else {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const MainAppScreen()),
+                  );
+                }
               },
               child: const Text('Verify'),
             ),

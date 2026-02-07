@@ -1,4 +1,5 @@
 import 'package:edochub_b2b/widgets/pebble_icon_button.dart';
+import 'package:edochub_b2b/widgets/animated_theme_toggle.dart';
 import 'package:flutter/material.dart';
 
 class DashboardHeader extends StatelessWidget {
@@ -81,9 +82,15 @@ class DashboardHeader extends StatelessWidget {
               ],
             ),
           ),
-          PebbleIconButton(
-            icon: Icons.notifications_outlined,
-            onPressed: onNotificationsPressed,
+          Row(
+            children: [
+              const AnimatedThemeToggle(),
+              const SizedBox(width: 12),
+              PebbleIconButton(
+                icon: Icons.notifications_outlined,
+                onPressed: onNotificationsPressed,
+              ),
+            ],
           ),
         ],
       ),

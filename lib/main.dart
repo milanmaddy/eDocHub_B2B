@@ -9,6 +9,7 @@ import 'package:edochub_b2b/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:edochub_b2b/utils/app_theme.dart';
 
 void main() {
   runZonedGuarded(
@@ -37,33 +38,38 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'eDoc Hub B2B',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFADD8E6),
-          brightness: Brightness.light,
-        ),
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF483D8B),
-          brightness: Brightness.dark,
-        ),
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).primaryTextTheme),
-        useMaterial3: true,
-      ),
-      themeMode: ThemeMode.system,
-      home: const AnimatedSplashScreen(),
-      routes: {
-        '/welcome': (context) => const WelcomeScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/register': (context) => const RegistrationScreen(),
-        '/main': (context) => const MainAppScreen(),
-        '/location':(context) => const LocationHandlerScreen(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: AppTheme.mode,
+      builder: (context, mode, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'eDoc Hub B2B',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFFADD8E6),
+              brightness: Brightness.light,
+            ),
+            textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF483D8B),
+              brightness: Brightness.dark,
+            ),
+            textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).primaryTextTheme),
+            useMaterial3: true,
+          ),
+          themeMode: mode,
+          home: const AnimatedSplashScreen(),
+          routes: {
+            '/welcome': (context) => const WelcomeScreen(),
+            '/login': (context) => const LoginScreen(),
+            '/register': (context) => const RegistrationScreen(),
+            '/main': (context) => const MainAppScreen(),
+            '/location': (context) => const LocationHandlerScreen(),
+          },
+        );
       },
     );
   }

@@ -2,6 +2,8 @@ import 'package:edochub_b2b/widgets/expansion_tile_card.dart';
 import 'package:edochub_b2b/widgets/profile_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:edochub_b2b/widgets/modular_button.dart';
+import 'package:edochub_b2b/services/api_service.dart';
+import 'package:edochub_b2b/widgets/modular_snackbar.dart';
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback onBack;
@@ -12,68 +14,82 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final _formKey = GlobalKey<FormState>();
   bool isOnline = true;
+  final _nameController = TextEditingController(text: 'Dr. Jane Doe');
+  final _licenseController = TextEditingController(text: 'A123-456-789');
+  final _bioController = TextEditingController(
+    text:
+        'Dedicated General Practitioner with over 10 years of experience in family medicine and patient care.',
+  );
+  final _emailController = TextEditingController(text: 'jane.doe@example.com');
+  final _phoneController = TextEditingController(text: '+91 98765 43210');
+  final _addressController = TextEditingController(text: 'Kolkata, West Bengal');
+  final _specializationController = TextEditingController(text: 'General Medicine');
+  final ApiService _api = ApiService();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _licenseController.dispose();
+    _bioController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    _specializationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        child: Column(
-          children: [
-            _buildProfileHeader(),
-            const SizedBox(height: 24),
-            _buildStatusToggle(),
-            const SizedBox(height: 24),
-            const ExpansionTileCard(
-              title: 'Personal Information',
-              initiallyExpanded: true,
-              children: [
-                ProfileTextField(label: 'Full Name', initialValue: 'Dr. Jane Doe'),
-                SizedBox(height: 16),
-                ProfileTextField(
-                    label: 'Medical License Number',
-                    initialValue: 'A123-456-789'),
-                SizedBox(height: 16),
-                ProfileTextField(
-                  label: 'Professional Bio',
-                  initialValue:
-                      'Dedicated General Practitioner with over 10 years of experience in family medicine and patient care.',
-                  maxLines: 4,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            ExpansionTileCard(
-              title: 'Specializations',
-              children: [
-                // Add specialization fields here
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text('Specialization content goes here.',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withAlpha(153))),
-                )
-              ],
-            ),
-            const SizedBox(height: 12),
-            ExpansionTileCard(
-              title: 'Availability & Contact',
-              children: [
-                // Add availability and contact fields here
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text('Availability & Contact content goes here.',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withAlpha(153))),
-                )
-              ],
-            ),
-            const SizedBox(height: 40),
-            ModularButton(
-              onPressed: () {},
-              child: const Text('Save Changes'),
-            ),
-            const SizedBox(height: 20),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              _buildProfileHeader(),
+              const SizedBox(height: 24),
+              _buildStatusToggle(),
+              const SizedBox(height: 24),
+              ExpansionTileCard(
+                title: 'Personal Information',
+                initiallyExpanded: true,
+                children: [
+                  ProfileTextField(label: 'Full Name', initialValue: _nameController.text),
+                  const SizedBox(height: 16),
+                  ProfileTextField(label: 'Medical License Number', initialValue: _licenseController.text),
+                  const SizedBox(height: 16),
+                  ProfileTextField(label: 'Professional Bio', initialValue: _bioController.text, maxLines: 4),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ExpansionTileCard(
+                title: 'Specializations',
+                children: [
+                  ProfileTextField(label: 'Primary Specialization', initialValue: _specializationController.text),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ExpansionTileCard(
+                title: 'Availability & Contact',
+                children: [
+                  ProfileTextField(label: 'Email', initialValue: _emailController.text),
+                  const SizedBox(height: 16),
+                  ProfileTextField(label: 'Phone', initialValue: _phoneController.text),
+                  const SizedBox(height: 16),
+                  ProfileTextField(label: 'Address', initialValue: _addressController.text),
+                ],
+              ),
+              const SizedBox(height: 40),
+              ModularButton(
+                onPressed: _saveProfile,
+                child: const Text('Save Changes'),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
@@ -178,5 +194,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _saveProfile() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    final payload = {
+      'name': _nameController.text.trim(),
+      'license': _licenseController.text.trim(),
+      'bio': _bioController.text.trim(),
+      'specialization': _specializationController.text.trim(),
+      'email': _emailController.text.trim(),
+      'phone': _phoneController.text.trim(),
+      'address': _addressController.text.trim(),
+      'status': isOnline ? 'online' : 'away',
+    };
+    try {
+      await _api.put('profile', payload);
+      if (!mounted) return;
+      showModularSnackbar(context, 'Profile saved', type: SnackbarType.success);
+    } catch (e) {
+      if (!mounted) return;
+      showModularSnackbar(context, 'Failed to save profile', type: SnackbarType.error);
+    }
   }
 }

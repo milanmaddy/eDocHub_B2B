@@ -1,4 +1,4 @@
-package com.example.edochub_b2b
+package com.edochub.b2b
 
 import io.flutter.embedding.android.FlutterActivity
 
